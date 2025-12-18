@@ -3,6 +3,10 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion } from 'motion/react'
 import { LogOut } from 'lucide-react'
 import { appRoutes } from '../../../routes/appRoutes'
+import { useLogoutMutation } from '../../../Queries/signInQuery'
+import Cookies from 'js-cookie'
+import { useNavigate } from 'react-router-dom'
+import ButtonSm from '../../Common/Button'
 
 type NavigationSection = 'main' | 'orders' | 'settings'
 
@@ -23,6 +27,7 @@ const NAVIGATION_SECTIONS: Array<{ title: string; key: NavigationSection }> = [
 const SideNav: React.FC = () => {
   const [activeRoute, setActiveRoute] = useState<string>('')
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
   useEffect(() => {
     const currentPath = window.location.pathname
@@ -44,7 +49,7 @@ const navigationItems: NavigationItem[] = useMemo(
   () => [
     {
       label: 'Home',
-      path: appRoutes.home,
+      path: appRoutes.dashboard,
       icon: '/icons/sideNavIcons/dashboard-icon.svg',
       activeIcon: '/icons/sideNavIcons/dashboard-icon-active.svg',
       section: 'main',
@@ -61,10 +66,29 @@ const navigationItems: NavigationItem[] = useMemo(
 )
 
 
-  const handleLogout = useCallback(() => {
-    localStorage.removeItem('token')
-    window.location.href = appRoutes.home
-  }, [])
+const navigate = useNavigate()
+const { mutate: logout } = useLogoutMutation()
+
+const handleLogout = useCallback(() => {
+  logout(undefined, {
+    onSuccess: () => {
+      // ✅ Clear cookies
+      Cookies.remove('token', { path: '/' })
+
+      // ✅ Clear localStorage (auth-related or full)
+      localStorage.removeItem('token')
+      localStorage.removeItem('user') // if exists
+      localStorage.removeItem('supabase.auth.token') // safety
+
+      // ✅ Optional: clear sessionStorage too
+      sessionStorage.clear()
+
+      // ✅ Redirect to sign-in
+      navigate(appRoutes.signInPage, { replace: true })
+    },
+  })
+}, [logout, navigate])
+
 
   const toggleExpansion = () => setIsExpanded((prev) => !prev)
 
@@ -160,7 +184,7 @@ const navigationItems: NavigationItem[] = useMemo(
           </div>
           <button
             type="button"
-            onClick={handleLogout}
+           onClick={() => setShowLogoutConfirm(true)}
             className={`mt-auto w-full cursor-pointer rounded-[12px] border-2 border-transparent text-red-600 transition-all duration-300 ease-in-out ${isExpanded ? 'flex items-center justify-start gap-3 px-3 py-2 hover:border-[#eeeeee] hover:bg-white' : 'flex flex-col items-center px-1.5 py-2 text-center'}`}
           >
             <div
@@ -176,6 +200,39 @@ const navigationItems: NavigationItem[] = useMemo(
           </button>
         </motion.div>
       </motion.section>
+
+      {showLogoutConfirm && (
+  <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40">
+    <div className="w-full max-w-[360px] rounded-xl bg-white p-6 shadow-xl">
+      <h3 className="text-lg font-semibold text-slate-900">
+        Confirm Logout
+      </h3>
+
+      <p className="mt-2 text-sm text-slate-600">
+        Are you sure you want to log out?
+      </p>
+
+      <div className="mt-6 flex justify-end gap-3">
+        <ButtonSm
+          state="outline"
+          text="Cancel"
+          onClick={() => setShowLogoutConfirm(false)}
+        />
+
+        <ButtonSm
+          state="danger"
+          text="Logout"
+          isPending={false}
+          onClick={() => {
+            setShowLogoutConfirm(false)
+            handleLogout()
+          }}
+        />
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   )
 }

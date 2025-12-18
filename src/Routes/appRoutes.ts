@@ -1,6 +1,6 @@
 export const appRoutes = {
   signInPage: '/auth',
-  home: '/',
+  dashboard: '/',
   courses: {
     path: '/courses',
     children: {

@@ -3,6 +3,7 @@ import './App.css'
 import { appRoutes } from './routes/appRoutes'
 
 import MainLayout from './components/Layout/Mainlayout/MainLayout'
+import ProtectedRoute from './components/Layout/Mainlayout/ProtectedRoute'
 
 // Pages
 import Home from './Pages/Home/HomePage'
@@ -12,13 +13,15 @@ import { SignInPage } from './Pages/Auth/Auth'
 function App() {
   return (
     <Routes>
-      {/* 🔹 Public routes */}
+      {/* 🔓 Public Routes */}
       <Route path={appRoutes.signInPage} element={<SignInPage />} />
 
-      {/* 🔹 Main authenticated layout */}
-      <Route element={<MainLayout />}>
-        <Route path={appRoutes.home} element={<Home />} />
-        <Route path={appRoutes.courses.path} element={<CourseUpload />} />
+      {/* 🔒 Protected Routes */}
+      <Route element={<ProtectedRoute />}>
+        <Route element={<MainLayout />}>
+          <Route path={appRoutes.dashboard} element={<Home />} />
+          <Route path={appRoutes.courses.path} element={<CourseUpload />} />
+        </Route>
       </Route>
     </Routes>
   )
