@@ -44,37 +44,39 @@ export const ButtonSm: React.FC<ButtonSmProps> = ({
   });
 
   const buttonProps = onLongPress
-    ? {
-        ...longPressHandlers,
-        onClick: undefined, // Avoid conflict
-      }
-    : {
-        onClick,
-      };
+    ? { ...longPressHandlers, onClick: undefined }
+    : { onClick };
+
+  const baseClasses =
+    "btn-sm flex items-center justify-center gap-2 rounded-[9px] px-3 py-2 text-sm select-none transition-all duration-200 ease-in-out";
+
+  const stateClasses = {
+    default:
+      "bg-blue-900 text-white hover:bg-blue-800 active:bg-blue-700",
+    outline:
+      "border border-blue-900 text-blue-900 hover:bg-blue-50 active:bg-blue-100",
+    danger:
+      "bg-[#DC3545] text-white hover:bg-[#BB2D3B] active:bg-[#A52834]",
+  };
 
   return (
-<button
-  type={type}
-  disabled={disabled}
-  className={`btn-sm flex cursor-pointer flex-row items-center gap-2 rounded-[9px] px-3 py-2 text-sm transition-all duration-200 ease-in-out select-none 
-    ${
-      state === "default"
-        ? "bg-blue-900 hover:bg-blue-800 active:bg-blue-700 text-white"
-        : state === "outline"
-        ? "text-gray-800 outline-1 outline-slate-300 hover:bg-gray-100 active:bg-gray-200"
-        : state === "danger"
-        ? "bg-[#DC3545] hover:bg-[#BB2D3B] active:bg-[#A52834] text-white"
-        : ""
-    }
-    ${className} flex justify-center`}
-  {...buttonProps}
->
+    <button
+      type={type}
+      disabled={disabled || isPending}
+      className={`
+        ${baseClasses}
+        ${stateClasses[state]}
+        ${disabled || isPending ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}
+        ${className}
+      `}
+      {...buttonProps}
+    >
       {/* Left icon */}
       {imgUrl && iconPosition === "left" && (
         <img src={imgUrl} alt="" className="min-h-4 min-w-4" />
       )}
 
-      {/* Text or children */}
+      {/* Text / children */}
       {children ? children : text}
 
       {/* Right icon */}
@@ -83,14 +85,21 @@ export const ButtonSm: React.FC<ButtonSmProps> = ({
       )}
 
       {/* Spinner */}
-      {isPending && <Spinner size="sm" className="text-white" />}
+      {isPending && (
+        <Spinner
+          size="sm"
+          className={state === "outline" ? "text-blue-900" : "text-white"}
+        />
+      )}
     </button>
   );
 };
 
-
-
 export default ButtonSm;
+
+/* -------------------------------------------------
+ * Spinner
+ * -------------------------------------------------*/
 
 interface SpinnerProps {
   size?: "sm" | "md" | "lg";
@@ -110,7 +119,6 @@ const Spinner: React.FC<SpinnerProps> = ({ size = "md", className = "" }) => {
         className="animate-spin"
         viewBox="0 0 24 24"
         fill="none"
-        xmlns="http://www.w3.org/2000/svg"
       >
         <circle
           cx="12"
@@ -118,9 +126,6 @@ const Spinner: React.FC<SpinnerProps> = ({ size = "md", className = "" }) => {
           r="10"
           stroke="currentColor"
           strokeWidth="2"
-          strokeLinecap="round"
-          strokeDasharray="31.416"
-          strokeDashoffset="31.416"
           className="opacity-25"
         />
         <circle
@@ -129,18 +134,10 @@ const Spinner: React.FC<SpinnerProps> = ({ size = "md", className = "" }) => {
           r="10"
           stroke="currentColor"
           strokeWidth="2"
-          strokeLinecap="round"
-          strokeDasharray="31.416"
-          strokeDashoffset="23.562"
+          strokeDasharray="31.4"
+          strokeDashoffset="23.5"
           className="opacity-75"
-        >
-          <animate
-            attributeName="stroke-dashoffset"
-            dur="2s"
-            values="31.416;0;31.416"
-            repeatCount="indefinite"
-          />
-        </circle>
+        />
       </svg>
     </div>
   );

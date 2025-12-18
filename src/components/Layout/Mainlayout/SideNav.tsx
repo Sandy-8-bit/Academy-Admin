@@ -50,32 +50,11 @@ const navigationItems: NavigationItem[] = useMemo(
       section: 'main',
     },
     {
-      label: 'My Courses',
-      path: appRoutes.myCourses.path,
+      label: 'Courses',
+      path: appRoutes.courses.path,
       icon: '/icons/sideNavIcons/courses-icon.svg',
       activeIcon: '/icons/sideNavIcons/courses-icon-active.svg',
       section: 'main',
-    },
-    {
-      label: 'Certifications',
-      path: appRoutes.certifications.path,
-      icon: '/icons/sideNavIcons/certification-icon.svg',
-      activeIcon: '/icons/sideNavIcons/certification-icon-active.svg',
-      section: 'main',
-    },
-    {
-      label: 'Profile',
-      path: appRoutes.profile.path,
-      icon: '/icons/sideNavIcons/profile-icon.svg',
-      activeIcon: '/icons/sideNavIcons/profile-icon-active.svg',
-      section: 'settings',
-    },
-    {
-      label: 'Settings',
-      path: appRoutes.settings.path,
-      icon: '/icons/sideNavIcons/settings-icon.svg',
-      activeIcon: '/icons/sideNavIcons/settings-icon-active.svg',
-      section: 'settings',
     },
   ],
   []
@@ -84,7 +63,7 @@ const navigationItems: NavigationItem[] = useMemo(
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem('token')
-    window.location.href = appRoutes.landingPage
+    window.location.href = appRoutes.home
   }, [])
 
   const toggleExpansion = () => setIsExpanded((prev) => !prev)

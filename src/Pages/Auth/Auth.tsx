@@ -1,6 +1,6 @@
-import ButtonSm from '@/components/Common/Button'
-import Input from '@/components/Common/Input'
-import { useLogin } from '@/Queries/AuthQueries'
+import ButtonSm from '../../components/Common/Button'
+import Input from '../../components/Common/Input'
+import { useLogin } from '../../Queries/AuthQueries'
 import { type FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
@@ -111,7 +111,6 @@ export const SignInPage = () => {
             isPending={isPending}
             disabled={isSubmitDisabled}
             onClick={handleLogin}
-            className="mt-2 w-full rounded-2xl bg-blue-500 py-3 text-white hover:bg-blue-700"
           />
         </form>
 
