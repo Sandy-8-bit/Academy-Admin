@@ -1,32 +1,50 @@
-import React from 'react'
-import { Outlet } from 'react-router-dom'
-import SideNav from './SideNav'
-import { TopNav } from './TopNav'
+import React, { useEffect } from "react";
+import { Outlet } from "react-router-dom";
+import SideNav from "./SideNav";
+import { TopNav } from "./TopNav";
+import { useFetchUserMe } from "../../../Queries/UserQuery";
 
 const MainLayout: React.FC = () => {
-  // TODO: Replace with user context or auth
-  const userName = 'John Doe'
+  const { data, isLoading } = useFetchUserMe();
 
-  // TODO: Replace with utility function or Date-fns/Day.js
-  const formattedDate = 'Saturday, 11th November 2022'
+  // 👉 Extract user name safely
+  const userName = data?.data?.name || "User";
+
+  // 👉 Store user details in localStorage once fetched
+  useEffect(() => {
+    if (data?.data) {
+      localStorage.setItem("userMe", JSON.stringify(data.data));
+    }
+  }, [data]);
+
+  // 👉 Format date
+  const formattedDate = new Date().toLocaleDateString("en-IN", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  if (isLoading) return null; // replace with loader if needed
 
   return (
     <div className="Main-entry-point flex h-screen w-screen flex-row overflow-hidden bg-[#FAFAFA]">
       <SideNav />
+
       <section className="flex h-full w-full flex-col overflow-hidden">
         {/* Top Navbar */}
         <TopNav userName={userName} formattedDate={formattedDate} />
+
         {/* Content */}
         <main
           id="layout"
-          className="main-content flex-1 overflow-y-auto py-3 pr-3 pb-24 select-none! md:pb-0 lg:py-4 lg:pr-4"
+          className="main-content flex-1 overflow-y-auto py-3 pr-3 pb-24 md:pb-0 lg:py-4 lg:pr-4"
         >
-          {/*This is where the nested routes will be rendered which will be given my router dom from app.tsx  */}
           <Outlet />
         </main>
       </section>
     </div>
-  )
-}
+  );
+};
 
-export default MainLayout
+export default MainLayout;

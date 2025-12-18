@@ -95,10 +95,10 @@ const handleLogout = useCallback(() => {
   return (
     <div
       style={{ zoom: 0.85 }}
-      className="floating-container relative flex min-h-[125vh] bg-[#FAFAFA] transition-all duration-300"
+      className="floating-container relative flex min-h-[125vh] border-r border-gray-200 bg-white transition-all duration-300"
     >
       <motion.section
-        className={`flex h-[115vh] flex-col gap-4 overflow-hidden bg-[#FAFAFA] px-2.5 pt-4 transition-all duration-300 select-none ${isExpanded ? 'w-[280px]' : 'w-[100px]'}`}
+        className={`flex h-[115vh] flex-col gap-4 overflow-hidden  border-r border-gray-200 bg-white px-2.5 pt-4 transition-all duration-300 select-none ${isExpanded ? 'w-[280px]' : 'w-[100px]'}`}
         animate={{ x: 0, opacity: 1 }}
       >
         <motion.div
@@ -202,7 +202,7 @@ const handleLogout = useCallback(() => {
       </motion.section>
 
       {showLogoutConfirm && (
-  <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40">
+  <div className="fixed inset-0 z-999 flex items-center justify-center bg-black/40">
     <div className="w-full max-w-[360px] rounded-xl bg-white p-6 shadow-xl">
       <h3 className="text-lg font-semibold text-slate-900">
         Confirm Logout
