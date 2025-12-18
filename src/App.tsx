@@ -9,6 +9,7 @@ import ProtectedRoute from './components/Layout/Mainlayout/ProtectedRoute'
 import Home from './Pages/Home/HomePage'
 import CourseUpload from './Pages/Course/CourseUpload'
 import { SignInPage } from './Pages/Auth/Auth'
+import Test from './Pages/Test'
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path={appRoutes.dashboard} element={<Home />} />
           <Route path={appRoutes.courses.path} element={<CourseUpload />} />
+          <Route path="/test" element={<Test/>}/>
         </Route>
       </Route>
     </Routes>
