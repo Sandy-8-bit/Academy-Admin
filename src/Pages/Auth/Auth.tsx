@@ -1,6 +1,5 @@
-import { type FormEvent, useEffect, useState } from "react";
+import { type FormEvent,useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
 import ButtonSm from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
 import { useSignInMutation } from "../../Queries/signInQuery";
@@ -9,18 +8,10 @@ import { appRoutes } from "../../routes/appRoutes";
 export const SignInPage = () => {
   const navigate = useNavigate();
   const { mutate: signIn, isPending } = useSignInMutation();
-
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  useEffect(()=>{
-    const token2 =  Cookies.get("token")
-   const token =  localStorage.getItem("token")
-   if(token || token2 ){
-    navigate(appRoutes.dashboard)
 
-   }
-  },[])
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

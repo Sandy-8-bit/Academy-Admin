@@ -1,9 +1,5 @@
-import React from 'react'
-import { useFetchUserMe } from '../Queries/UserQuery'
-const Test = () => {
-const {data} = useFetchUserMe()
-console.log(data)
 
+const Test = () => {
   return (
     <div>Test</div>
   )

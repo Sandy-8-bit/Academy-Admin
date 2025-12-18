@@ -1,10 +1,13 @@
 export const appRoutes = {
-  signInPage: '/auth',
-  dashboard: '/',
-  courses: {
-    path: '/courses',
+  signInPage: "/auth",
+  dashboard: "/",
+
+  management: {
+    path: "/management",
     children: {
-      details: '/courses/:id',
+      courseCreate: "/management/course",
+      moduleCreate: "/management/module",
+      contentCreate: "/management/content",
     },
   },
-}
+};

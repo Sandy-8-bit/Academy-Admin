@@ -55,12 +55,12 @@ const navigationItems: NavigationItem[] = useMemo(
       section: 'main',
     },
     {
-      label: 'Courses',
-      path: appRoutes.courses.path,
-      icon: '/icons/sideNavIcons/courses-icon.svg',
-      activeIcon: '/icons/sideNavIcons/courses-icon-active.svg',
+      label: 'Managemnt',
+      path: appRoutes.management.path,
+      icon: '/icons/sideNavIcons/dashboard-icon.svg',
+      activeIcon: '/icons/sideNavIcons/dashboard-icon-active.svg',
       section: 'main',
-    },
+    }
   ],
   []
 )
@@ -109,14 +109,14 @@ const handleLogout = useCallback(() => {
         >
           <img
             onClick={() => toggleExpansion()}
-            src="/icons/logo-icon.svg"
+            src="/logs1.webp"
             className={`${isExpanded ? 'h-14 w-14 self-center' : 'h-16 w-16 self-center'} `}
           />
 
           {isExpanded && (
             <div className="flex w-full flex-col">
               <span className="text-md min-w-max font-semibold text-slate-900">
-                EBT Catering
+                Certification 
               </span>
               <span className="text-sm text-slate-500">Admin</span>
             </div>
@@ -266,7 +266,7 @@ const NavigationButton: React.FC<NavigationButtonProps> = ({
       className={`Navigation-button-container w-full cursor-pointer rounded-[12px] border-2 border-transparent transition-all duration-300 ease-in-out ${isExpanded ? `flex items-center justify-start gap-3 px-3 py-2 ${isActive ? 'border-2! border-[#eeeeee]! bg-white text-slate-600' : ''}` : `flex scale-90 flex-col items-center px-1.5 py-2 text-center`}`}
     >
       <div
-        className={`flex items-center justify-center rounded-[10px] transition-all ${isExpanded ? 'h-11 w-11 bg-white/20' : `mb-1 h-12 w-12 ${isActive ? 'bg-orange-500' : ''} `}`}
+        className={`flex items-center justify-center rounded-[10px] transition-all ${isExpanded ? 'h-11 w-11 bg-white/20' : `mb-1 h-12 w-12 ${isActive ? 'bg-blue-800' : ''} `}`}
       >
         <img
           src={
