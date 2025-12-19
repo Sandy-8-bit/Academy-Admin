@@ -295,7 +295,7 @@ const DropdownSelect: React.FC<DropdownSelectProps> = ({
       {title && (
         <h3 className="mb-0.5 w-full justify-start text-xs leading-loose font-semibold text-slate-700">
           {title}
-          {required && <span className="text-red-500">*</span>}
+          {required && <span className="text-blue-900">*</span>}
         </h3>
       )}
 
@@ -397,7 +397,7 @@ const DropdownSelect: React.FC<DropdownSelectProps> = ({
                       highlightIndex === idx
                         ? 'bg-slate-100'
                         : selected.label === option.label
-                          ? 'font-semibold text-orange-500'
+                          ? 'font-semibold text-blue-900'
                           : 'text-slate-700'
                     }`}
                   >

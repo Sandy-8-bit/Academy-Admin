@@ -129,12 +129,7 @@ const CourseUpload: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-blue-900">
-            Course Management
-          </h1>
-          <p className="text-sm text-slate-600 mt-1">
-            Create and manage your courses
-          </p>
+ 
         </div>
         {!showForm && (
           <ButtonSm
