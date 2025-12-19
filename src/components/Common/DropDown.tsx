@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 import { motion } from 'framer-motion'
 import { createPortal } from 'react-dom'
-import Spinner from './Spinner'
+import { Spinner } from './Buttons'
 
 export interface DropdownOption {
   label: string
