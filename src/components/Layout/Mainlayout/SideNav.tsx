@@ -1,108 +1,113 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { motion } from 'motion/react'
-import { LogOut } from 'lucide-react'
-import { appRoutes } from '../../../routes/appRoutes'
-import { useLogoutMutation } from '../../../Queries/signInQuery'
-import Cookies from 'js-cookie'
-import { useNavigate } from 'react-router-dom'
-import ButtonSm from '../../Common/Button'
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { motion } from "motion/react";
+import {
+  LayoutDashboardIcon,
+  LogOut,
+  Menu,
+  MenuIcon,
+  MenuSquareIcon,
+  PackageOpen,
+  type LucideIcon,
+} from "lucide-react";
+import { appRoutes } from "../../../routes/appRoutes";
+import { useLogoutMutation } from "../../../queries/signInQuery";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import ButtonSm from "../../Common/Button";
 
-type NavigationSection = 'main' | 'orders' | 'settings'
+type NavigationSection = "main" | "orders" | "settings";
 
 interface NavigationItem {
-  label: string
-  path: string
-  icon: string
-  activeIcon: string
-  section: NavigationSection
+  label: string;
+  path: string;
+  icon: LucideIcon;
+  section: NavigationSection;
 }
 
 const NAVIGATION_SECTIONS: Array<{ title: string; key: NavigationSection }> = [
-  { title: 'Main Menu', key: 'main' },
-  { title: 'Order Management', key: 'orders' },
-  { title: 'Settings', key: 'settings' },
-]
+  { title: "Main Menu", key: "main" },
+  { title: "Order Management", key: "orders" },
+  { title: "Settings", key: "settings" },
+];
 
 const SideNav: React.FC = () => {
-  const [activeRoute, setActiveRoute] = useState<string>('')
-  const [isExpanded, setIsExpanded] = useState<boolean>(false)
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+  const [activeRoute, setActiveRoute] = useState<string>("");
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   useEffect(() => {
-    const currentPath = window.location.pathname
+    const currentPath = window.location.pathname;
 
-    setActiveRoute(currentPath)
-  }, [])
+    setActiveRoute(currentPath);
+  }, []);
 
   const navigateToRoute = useCallback((route: string) => {
-    setActiveRoute(route)
-    window.history.pushState({}, '', route)
-    window.dispatchEvent(new PopStateEvent('popstate'))
-  }, [])
+    setActiveRoute(route);
+    window.history.pushState({}, "", route);
+    window.dispatchEvent(new PopStateEvent("popstate"));
+  }, []);
 
   const isRouteActive = (route: string): boolean => {
-    return activeRoute === route
-  }
+    return activeRoute === route;
+  };
 
-const navigationItems: NavigationItem[] = useMemo(
-  () => [
-    {
-      label: 'Home',
-      path: appRoutes.dashboard,
-      icon: '/icons/sideNavIcons/dashboard-icon.svg',
-      activeIcon: '/icons/sideNavIcons/dashboard-icon-active.svg',
-      section: 'main',
-    },
-    {
-      label: 'Managemnt',
-      path: appRoutes.management.path,
-      icon: '/icons/sideNavIcons/dashboard-icon.svg',
-      activeIcon: '/icons/sideNavIcons/dashboard-icon-active.svg',
-      section: 'main',
-    }
-  ],
-  []
-)
+  const navigationItems: NavigationItem[] = useMemo(
+    () => [
+      {
+        label: "Home",
+        path: appRoutes.dashboard,
+        icon: LayoutDashboardIcon,
 
+        section: "main",
+      },
+      {
+        label: "Course Management",
+        path: appRoutes.course.path,
+        icon: PackageOpen,
 
-const navigate = useNavigate()
-const { mutate: logout } = useLogoutMutation()
+        section: "main",
+      },
+    ],
+    []
+  );
 
-const handleLogout = useCallback(() => {
-  logout(undefined, {
-    onSuccess: () => {
-      // ✅ Clear cookies
-      Cookies.remove('token', { path: '/' })
+  const navigate = useNavigate();
+  const { mutate: logout } = useLogoutMutation();
 
-      // ✅ Clear localStorage (auth-related or full)
-      localStorage.removeItem('token')
-      localStorage.removeItem('user') // if exists
-      localStorage.removeItem('supabase.auth.token') // safety
+  const handleLogout = useCallback(() => {
+    logout(undefined, {
+      onSuccess: () => {
+        // ✅ Clear cookies
+        Cookies.remove("token", { path: "/" });
 
-      // ✅ Optional: clear sessionStorage too
-      sessionStorage.clear()
+        // ✅ Clear localStorage (auth-related or full)
+        localStorage.removeItem("token");
+        localStorage.removeItem("user"); // if exists
+        localStorage.removeItem("supabase.auth.token"); // safety
 
-      // ✅ Redirect to sign-in
-      navigate(appRoutes.signInPage, { replace: true })
-    },
-  })
-}, [logout, navigate])
+        // ✅ Optional: clear sessionStorage too
+        sessionStorage.clear();
 
+        // ✅ Redirect to sign-in
+        navigate(appRoutes.signInPage, { replace: true });
+      },
+    });
+  }, [logout, navigate]);
 
-  const toggleExpansion = () => setIsExpanded((prev) => !prev)
+  const toggleExpansion = () => setIsExpanded((prev) => !prev);
 
   return (
     <div
       style={{ zoom: 0.85 }}
-      className="floating-container relative flex min-h-[125vh] border-r border-gray-200 bg-white transition-all duration-300"
+      className="floating-container relative flex min-h-[125vh] border-r border-[#f1f1f1]  transition-all duration-300"
     >
       <motion.section
-        className={`flex h-[115vh] flex-col gap-4 overflow-hidden  border-r border-gray-200 bg-white px-2.5 pt-4 transition-all duration-300 select-none ${isExpanded ? 'w-[280px]' : 'w-[100px]'}`}
+        className={`flex h-[115vh] flex-col gap-4 overflow-hidden  border-r border-[#f1f1f1] bg-white px-2.5 pt-4 transition-all duration-300 select-none ${isExpanded ? "w-[280px]" : "w-[100px]"}`}
         animate={{ x: 0, opacity: 1 }}
       >
         <motion.div
-          className={`mt-1 flex w-full items-center ${isExpanded ? 'justify-between gap-3 rounded-xl border-2 border-[#eeeeee] bg-white p-2' : 'flex-col gap-3'} px-1.5`}
+          className={`mt-1 flex w-full items-center ${isExpanded ? "justify-between gap-3 rounded-xl border-2 border-[#eeeeee] bg-white p-2" : "flex-col gap-3"} px-1.5`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.4 }}
@@ -110,13 +115,13 @@ const handleLogout = useCallback(() => {
           <img
             onClick={() => toggleExpansion()}
             src="/logs1.webp"
-            className={`${isExpanded ? 'h-14 w-14 self-center' : 'h-16 w-16 self-center'} `}
+            className={`${isExpanded ? "h-14 w-14 self-center" : "h-16 w-16 self-center"} `}
           />
 
           {isExpanded && (
             <div className="flex w-full flex-col">
               <span className="text-md min-w-max font-semibold text-slate-900">
-                Certification 
+                Certification
               </span>
               <span className="text-sm text-slate-500">Admin</span>
             </div>
@@ -125,7 +130,7 @@ const handleLogout = useCallback(() => {
             type="button"
             onClick={toggleExpansion}
             aria-label="Collapse navigation"
-            className={`mr-2 cursor-pointer rounded-sm border-2 border-[#F1F1F1] p-1 text-slate-400 transition hover:text-slate-600 focus:outline-none ${isExpanded ? '' : 'rotate-180'}`}
+            className={`mr-2 cursor-pointer rounded-sm border-2 border-[#F1F1F1] p-1 text-slate-400 transition hover:text-slate-600 focus:outline-none ${isExpanded ? "" : "rotate-180"}`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -149,15 +154,15 @@ const handleLogout = useCallback(() => {
           transition={{ delay: 0.3, duration: 0.5 }}
         >
           <div
-            className={`flex w-full flex-col ${isExpanded ? 'gap-0' : 'items-center gap-0'}`}
+            className={`flex w-full flex-col ${isExpanded ? "gap-0" : "items-center gap-0"}`}
           >
             {NAVIGATION_SECTIONS.map(({ title, key }) => {
               const sectionItems = navigationItems.filter(
                 (item) => item.section === key
-              )
+              );
 
               if (sectionItems.length === 0) {
-                return null
+                return null;
               }
 
               return (
@@ -172,23 +177,22 @@ const handleLogout = useCallback(() => {
                       key={item.path}
                       labelName={item.label}
                       isActive={isRouteActive(item.path)}
-                      iconSrc={item.icon}
-                      activeIconSrc={item.activeIcon}
+                      Icon={item.icon}
                       onClick={() => navigateToRoute(item.path)}
                       isExpanded={isExpanded}
                     />
                   ))}
                 </React.Fragment>
-              )
+              );
             })}
           </div>
           <button
             type="button"
-           onClick={() => setShowLogoutConfirm(true)}
-            className={`mt-auto w-full cursor-pointer rounded-[12px] border-2 border-transparent text-red-600 transition-all duration-300 ease-in-out ${isExpanded ? 'flex items-center justify-start gap-3 px-3 py-2 hover:border-[#eeeeee] hover:bg-white' : 'flex flex-col items-center px-1.5 py-2 text-center'}`}
+            onClick={() => setShowLogoutConfirm(true)}
+            className={`mt-auto w-full cursor-pointer rounded-[12px] border-2 border-transparent text-red-600 transition-all duration-300 ease-in-out ${isExpanded ? "flex items-center justify-start gap-3 px-3 py-2 hover:border-[#eeeeee] hover:bg-white" : "flex flex-col items-center px-1.5 py-2 text-center"}`}
           >
             <div
-              className={`flex items-center justify-center rounded-[10px] transition-all duration-200 ease-in-out ${isExpanded ? 'h-11 w-11 bg-white/30 text-red-500' : 'mb-1 h-12 w-12 text-red-500 hover:bg-red-100'}`}
+              className={`flex items-center justify-center rounded-[10px] transition-all duration-200 ease-in-out ${isExpanded ? "h-11 w-11 bg-white/30 text-red-500" : "mb-1 h-12 w-12 text-red-500 hover:bg-red-100"}`}
             >
               <LogOut className="h-5 w-5" />
             </div>
@@ -202,87 +206,76 @@ const handleLogout = useCallback(() => {
       </motion.section>
 
       {showLogoutConfirm && (
-  <div className="fixed inset-0 z-999 flex items-center justify-center bg-black/40">
-    <div className="w-full max-w-[360px] rounded-xl bg-white p-6 shadow-xl">
-      <h3 className="text-lg font-semibold text-slate-900">
-        Confirm Logout
-      </h3>
+        <div className="fixed inset-0 z-999 flex items-center justify-center bg-black/40">
+          <div className="w-full max-w-[360px] rounded-xl bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-slate-900">
+              Confirm Logout
+            </h3>
 
-      <p className="mt-2 text-sm text-slate-600">
-        Are you sure you want to log out?
-      </p>
+            <p className="mt-2 text-sm text-slate-600">
+              Are you sure you want to log out?
+            </p>
 
-      <div className="mt-6 flex justify-end gap-3">
-        <ButtonSm
-          state="outline"
-          text="Cancel"
-          onClick={() => setShowLogoutConfirm(false)}
-        />
+            <div className="mt-6 flex justify-end gap-3">
+              <ButtonSm
+                state="outline"
+                text="Cancel"
+                onClick={() => setShowLogoutConfirm(false)}
+              />
 
-        <ButtonSm
-          state="danger"
-          text="Logout"
-          isPending={false}
-          onClick={() => {
-            setShowLogoutConfirm(false)
-            handleLogout()
-          }}
-        />
-      </div>
+              <ButtonSm
+                state="danger"
+                text="Logout"
+                isPending={false}
+                onClick={() => {
+                  setShowLogoutConfirm(false);
+                  handleLogout();
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
-  </div>
-)}
+  );
+};
 
-    </div>
-  )
-}
-
-export default SideNav
+export default SideNav;
 
 interface NavigationButtonProps {
-  labelName: string
-  isActive: boolean
-  iconSrc: string
-  activeIconSrc?: string
-  onClick?: () => void
-  isExpanded: boolean
+  labelName: string;
+  isActive: boolean;
+  Icon: LucideIcon;
+  onClick?: () => void;
+  isExpanded: boolean;
 }
 
 const NavigationButton: React.FC<NavigationButtonProps> = ({
   labelName,
   isActive,
-  iconSrc,
+  Icon,
   onClick,
   isExpanded,
-  activeIconSrc,
 }) => {
-  // const activeClasses = isActive
-  // ? 'bg-white text-slate-600 shadow-sm'
-  // : 'hover:bg-slate-100 text-slate-700'
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`Navigation-button-container w-full cursor-pointer rounded-[12px] border-2 border-transparent transition-all duration-300 ease-in-out ${isExpanded ? `flex items-center justify-start gap-3 px-3 py-2 ${isActive ? 'border-2! border-[#eeeeee]! bg-white text-slate-600' : ''}` : `flex scale-90 flex-col items-center px-1.5 py-2 text-center`}`}
+      className={`Navigation-button-container w-full cursor-pointer rounded-[12px] border-2 border-transparent transition-all duration-300 ease-in-out ${isExpanded ? `flex items-center justify-start gap-3 px-3 py-2 ${isActive ? "border-2! border-[#eeeeee]! bg-blue-800  text-white" : ""}` : `flex scale-90 flex-col items-center px-1.5 py-2 text-center`}`}
     >
       <div
-        className={`flex items-center justify-center rounded-[10px] transition-all ${isExpanded ? 'h-11 w-11 bg-white/20' : `mb-1 h-12 w-12 ${isActive ? 'bg-blue-800' : ''} `}`}
+        className={`flex items-center justify-center rounded-[10px] transition-all ${isExpanded ? "h-11 w-11 " : `mb-1 h-12 w-12 ${isActive ? "bg-blue-800" : ""} `}`}
       >
-        <img
-          src={
-            isExpanded
-              ? iconSrc
-              : isActive && activeIconSrc
-                ? activeIconSrc
-                : iconSrc
-          }
-          alt={labelName}
-          className={`h-7 w-7 ${isExpanded && isActive ? 'brightness-75' : ''}`}
-        />
+        {Icon && (
+          <Icon
+            size={24}
+            className={isActive ? "text-white" : "text-slate-700"}
+          />
+        )}
       </div>
       {isExpanded ? (
         <span
-          className={`text-base ${isActive ? 'font-semibold' : 'font-medium'} text-slate-700`}
+          className={`text-base ${isActive ? "font-medium text-white" : "font-medium text-slate-700"} `}
         >
           {labelName}
         </span>
@@ -292,5 +285,5 @@ const NavigationButton: React.FC<NavigationButtonProps> = ({
         </h4>
       )}
     </button>
-  )
-}
+  );
+};

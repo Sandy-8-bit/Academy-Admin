@@ -1,8 +1,8 @@
-import { type FormEvent,useState } from "react";
+import { type FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ButtonSm from "../../components/Common/Button";
 import Input from "../../components/Common/Input";
-import { useSignInMutation } from "../../Queries/signInQuery";
+import { useSignInMutation } from "../../queries/signInQuery";
 import { appRoutes } from "../../routes/appRoutes";
 
 export const SignInPage = () => {
@@ -11,7 +11,6 @@ export const SignInPage = () => {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

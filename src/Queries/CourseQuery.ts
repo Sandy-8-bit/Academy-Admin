@@ -1,46 +1,24 @@
-import Cookies from "js-cookie";
 import axiosInstance from "../utils/axios";
-import axios from "axios";
 import toast from "react-hot-toast";
-import {
-  useQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRoutes } from "../routes/apiRoutes";
-import type {
-  CourseResponse,
-  CourseRequest,
-} from "../types/CourseTypes";
-
-/* -------------------- AUTH HEADER -------------------- */
-const getAuthHeader = () => {
-  const token = Cookies.get("token");
-  if (!token) throw new Error("Unauthorized");
-
-  return {
-    Authorization: `Bearer ${token}`,
-  };
-};
+import type { CourseResponse, CourseRequest } from "../types/courseTypes";
+import { authHandler } from "@/utils/authHandler";
+import { handleApiError } from "@/utils/handleApiError";
 
 /* -------------------- GET ALL COURSES -------------------- */
 export const useFetchCourses = () => {
   const fetchCourses = async (): Promise<CourseResponse[]> => {
+    const token = authHandler();
     try {
-      const res = await axiosInstance.get<CourseResponse[]>(
-        apiRoutes.course,
-        {
-          headers: getAuthHeader(),
-        }
-      );
+      const res = await axiosInstance.get<CourseResponse[]>(apiRoutes.course, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       return res.data;
-    } catch (error: any) {
-      if (axios.isAxiosError(error)) {
-        toast.error(
-          error.response?.data?.message || "Failed to fetch courses"
-        );
-      }
-      throw error;
+    } catch (error) {
+      handleApiError(error, "fetch courses");
     }
   };
 
@@ -58,14 +36,21 @@ export const useCreateCourse = () => {
   const createCourse = async (
     payload: CourseRequest
   ): Promise<CourseResponse> => {
-    const res = await axiosInstance.post<CourseResponse>(
-      apiRoutes.course,
-      payload,
-      {
-        headers: getAuthHeader(),
-      }
-    );
-    return res.data;
+    const token = authHandler();
+    try {
+      const res = await axiosInstance.post<CourseResponse>(
+        apiRoutes.course,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return res.data;
+    } catch (error) {
+      handleApiError(error, "create course");
+    }
   };
 
   return useMutation({
@@ -73,11 +58,6 @@ export const useCreateCourse = () => {
     onSuccess: () => {
       toast.success("Course created successfully");
       queryClient.invalidateQueries({ queryKey: ["courses"] });
-    },
-    onError: (error: any) => {
-      toast.error(
-        error?.response?.data?.message || "Failed to create course"
-      );
     },
   });
 };
@@ -93,14 +73,21 @@ export const useUpdateCourse = () => {
     courseId: string;
     payload: CourseRequest;
   }): Promise<CourseResponse> => {
-    const res = await axiosInstance.put<CourseResponse>(
-      `${apiRoutes.course}/${courseId}`,
-      payload,
-      {
-        headers: getAuthHeader(),
-      }
-    );
-    return res.data;
+    const token = authHandler();
+    try {
+      const res = await axiosInstance.put<CourseResponse>(
+        `${apiRoutes.course}/${courseId}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return res.data;
+    } catch (error) {
+      handleApiError(error, "update course");
+    }
   };
 
   return useMutation({
@@ -112,11 +99,6 @@ export const useUpdateCourse = () => {
       });
       queryClient.invalidateQueries({ queryKey: ["courses"] });
     },
-    onError: (error: any) => {
-      toast.error(
-        error?.response?.data?.message || "Failed to update course"
-      );
-    },
   });
 };
 
@@ -127,13 +109,20 @@ export const useDeleteCourse = () => {
   const deleteCourse = async (
     courseId: string
   ): Promise<{ success: boolean }> => {
-    const res = await axiosInstance.delete<{ success: boolean }>(
-      `${apiRoutes.course}/${courseId}`,
-      {
-        headers: getAuthHeader(),
-      }
-    );
-    return res.data;
+    const token = authHandler();
+    try {
+      const res = await axiosInstance.delete<{ success: boolean }>(
+        `${apiRoutes.course}/${courseId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return res.data;
+    } catch (error) {
+      handleApiError(error, "delete course");
+    }
   };
 
   return useMutation({
@@ -142,24 +131,26 @@ export const useDeleteCourse = () => {
       toast.success("Course deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["courses"] });
     },
-    onError: (error: any) => {
-      toast.error(
-        error?.response?.data?.message || "Failed to delete course"
-      );
-    },
   });
 };
 
 /* -------------------- GET COURSE BY ID -------------------- */
 export const useFetchCourseById = (courseId: string) => {
   const fetchCourseById = async (): Promise<CourseResponse> => {
-    const res = await axiosInstance.get<CourseResponse>(
-      `${apiRoutes.course}/${courseId}`,
-      {
-        headers: getAuthHeader(),
-      }
-    );
-    return res.data;
+    const token = authHandler();
+    try {
+      const res = await axiosInstance.get<CourseResponse>(
+        `${apiRoutes.course}/${courseId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return res.data;
+    } catch (error) {
+      handleApiError(error, "fetch course");
+    }
   };
 
   return useQuery({

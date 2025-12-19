@@ -1,8 +1,7 @@
 import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import SideNav from "./SideNav";
-import { TopNav } from "./TopNav";
-import { useFetchUserMe } from "../../../Queries/UserQuery";
+import { useFetchUserMe } from "@/queries/UserQuery";
 
 const MainLayout: React.FC = () => {
   const { data, isLoading } = useFetchUserMe();
@@ -33,12 +32,12 @@ const MainLayout: React.FC = () => {
 
       <section className="flex h-full w-full flex-col overflow-hidden">
         {/* Top Navbar */}
-        <TopNav userName={userName} formattedDate={formattedDate} />
+        {/* <TopNav userName={userName} formattedDate={formattedDate} /> */}
 
         {/* Content */}
         <main
           id="layout"
-          className="main-content flex-1 overflow-y-auto py-3 pr-3 pb-24 md:pb-0 lg:py-4 lg:pr-4"
+          className="main-content flex-1 overflow-y-auto  pr-3 pb-24 md:pb-0  lg:pr-4"
         >
           <Outlet />
         </main>

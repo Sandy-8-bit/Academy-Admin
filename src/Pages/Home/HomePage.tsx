@@ -1,4 +1,5 @@
-
+import { TopNav } from "@/components/Layout/Mainlayout/TopNav";
+import { useFetchUserMe } from "@/queries/UserQuery";
 import {
   BookOpen,
   BarChart3,
@@ -10,6 +11,7 @@ import {
   Clock,
   Eye,
 } from "lucide-react";
+import { useEffect } from "react";
 
 /* =======================
    DASHBOARD DATA
@@ -133,8 +135,29 @@ const topCourses = [
 ======================= */
 
 export default function AdminDashboard() {
+  const { data, isLoading } = useFetchUserMe();
+
+  // 👉 Extract user name safely
+  const userName = data?.data?.name || "User";
+
+  // 👉 Store user details in localStorage once fetched
+  useEffect(() => {
+    if (data?.data) {
+      localStorage.setItem("userMe", JSON.stringify(data.data));
+    }
+  }, [data]);
+
+  // 👉 Format date
+  const formattedDate = new Date().toLocaleDateString("en-IN", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
   return (
     <div className="min-h-screen bg-gray-50">
+      <TopNav userName={userName} formattedDate={formattedDate} />
       <div className="px-2 py-2">
         {/* ================= STATS ================= */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
@@ -149,10 +172,10 @@ export default function AdminDashboard() {
                     stat.color === "blue"
                       ? "bg-blue-100"
                       : stat.color === "green"
-                      ? "bg-green-100"
-                      : stat.color === "purple"
-                      ? "bg-purple-100"
-                      : "bg-orange-100"
+                        ? "bg-green-100"
+                        : stat.color === "purple"
+                          ? "bg-purple-100"
+                          : "bg-orange-100"
                   }`}
                 >
                   <stat.icon
@@ -160,10 +183,10 @@ export default function AdminDashboard() {
                       stat.color === "blue"
                         ? "text-blue-900"
                         : stat.color === "green"
-                        ? "text-green-700"
-                        : stat.color === "purple"
-                        ? "text-purple-700"
-                        : "text-orange-700"
+                          ? "text-green-700"
+                          : stat.color === "purple"
+                            ? "text-purple-700"
+                            : "text-orange-700"
                     }`}
                   />
                 </div>
@@ -293,9 +316,7 @@ export default function AdminDashboard() {
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Upload Mode</span>
-                  <span className="font-semibold text-green-600">
-                    Enabled
-                  </span>
+                  <span className="font-semibold text-green-600">Enabled</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-600">Storage Usage</span>

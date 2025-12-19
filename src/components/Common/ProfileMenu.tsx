@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Moon, Sun, LogOut } from "lucide-react";
 import { appRoutes } from "../../routes/appRoutes";
-import useClickOutside from "../../Hooks/useClickOutside";
+import useClickOutside from "../../hooks/useClickOutside";
 
 type UserMe = {
   name?: string;
@@ -60,8 +60,7 @@ export default function ProfileMenu() {
   };
 
   const avatarSrc =
-    user?.avatar ||
-    `https://randomuser.me/api/portraits/men/${random}.jpg`;
+    user?.avatar || `https://randomuser.me/api/portraits/men/${random}.jpg`;
 
   return (
     <div className="relative" ref={containerRef}>
@@ -80,8 +79,7 @@ export default function ProfileMenu() {
           alt="Profile"
           className="h-9 w-9 rounded-full object-cover"
           onError={(e) => {
-            (e.target as HTMLImageElement).src =
-              "/images/default-user.png";
+            (e.target as HTMLImageElement).src = "/images/default-user.png";
           }}
         />
       </motion.button>
@@ -107,9 +105,7 @@ export default function ProfileMenu() {
                 <p className="font-semibold text-slate-800">
                   {user?.name || "User"}
                 </p>
-                <p className="text-sm text-slate-500">
-                  {user?.email || ""}
-                </p>
+                <p className="text-sm text-slate-500">{user?.email || ""}</p>
               </div>
             </div>
 

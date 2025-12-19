@@ -1,5 +1,5 @@
 import React from "react";
-import { useLongPress } from "../../Hooks/useLongPress";
+import { useLongPress } from "../../hooks/useLongPress";
 
 type ButtonState = "default" | "outline" | "danger";
 
@@ -51,12 +51,10 @@ export const ButtonSm: React.FC<ButtonSmProps> = ({
     "btn-sm flex items-center justify-center gap-2 rounded-[9px] px-3 py-2 text-sm select-none transition-all duration-200 ease-in-out";
 
   const stateClasses = {
-    default:
-      "bg-blue-900 text-white hover:bg-blue-800 active:bg-blue-700",
+    default: "bg-blue-900 text-white hover:bg-blue-800 active:bg-blue-700",
     outline:
       "border border-blue-900 text-blue-900 hover:bg-blue-50 active:bg-blue-100",
-    danger:
-      "bg-[#DC3545] text-white hover:bg-[#BB2D3B] active:bg-[#A52834]",
+    danger: "bg-[#DC3545] text-white hover:bg-[#BB2D3B] active:bg-[#A52834]",
   };
 
   return (
@@ -115,11 +113,7 @@ const Spinner: React.FC<SpinnerProps> = ({ size = "md", className = "" }) => {
 
   return (
     <div className={`${sizeClasses[size]} ${className}`}>
-      <svg
-        className="animate-spin"
-        viewBox="0 0 24 24"
-        fill="none"
-      >
+      <svg className="animate-spin" viewBox="0 0 24 24" fill="none">
         <circle
           cx="12"
           cy="12"

@@ -5,7 +5,7 @@ import {
   useCreateCourse,
   useUpdateCourse,
   useDeleteCourse,
-} from "../../Queries/CourseQuery";
+} from "../../queries/courseQuery";
 import type { CourseRequest, CourseResponse } from "../../types/CourseTypes";
 import Input from "../../components/Common/Input";
 import ButtonSm from "../../components/Common/Button";
@@ -65,9 +65,7 @@ const CourseUpload: React.FC = () => {
       accessVar: "price",
       sortable: true,
       render: (val) => (
-        <span className="font-semibold">
-          ₹{Number(val).toLocaleString()}
-        </span>
+        <span className="font-semibold">₹{Number(val).toLocaleString()}</span>
       ),
     },
     {
@@ -75,9 +73,7 @@ const CourseUpload: React.FC = () => {
       accessVar: "course_description",
       searchable: true,
       render: (val) => (
-        <p className="text-sm text-slate-600 line-clamp-2">
-          {String(val)}
-        </p>
+        <p className="text-sm text-slate-600 line-clamp-2">{String(val)}</p>
       ),
     },
   ];
@@ -102,7 +98,7 @@ const CourseUpload: React.FC = () => {
 
     if (editingCourseId) {
       updateCourse(
-        {  courseId: String(editingCourseId), payload: formData },
+        { courseId: String(editingCourseId), payload: formData },
         { onSuccess: resetForm }
       );
     } else {
@@ -111,7 +107,7 @@ const CourseUpload: React.FC = () => {
   };
 
   const handleEdit = (course: CourseResponse) => {
-   setEditingCourseId(String(course.id));
+    setEditingCourseId(String(course.id));
     setFormData({
       course_name: course.course_name,
       total_hours: course.total_hours,
@@ -128,9 +124,7 @@ const CourseUpload: React.FC = () => {
     <div className="flex flex-col gap-4 px-3">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
- 
-        </div>
+        <div></div>
         {!showForm && (
           <ButtonSm
             state="default"
@@ -157,9 +151,7 @@ const CourseUpload: React.FC = () => {
               <Input
                 title="Course Name"
                 inputValue={formData.course_name}
-                onChange={(v) =>
-                  handleChange("course_name", String(v))
-                }
+                onChange={(v) => handleChange("course_name", String(v))}
                 required
               />
 
@@ -167,9 +159,7 @@ const CourseUpload: React.FC = () => {
                 title="Total Hours"
                 type="num"
                 inputValue={formData.total_hours}
-                onChange={(v) =>
-                  handleChange("total_hours", Number(v))
-                }
+                onChange={(v) => handleChange("total_hours", Number(v))}
                 required
               />
 
@@ -184,18 +174,14 @@ const CourseUpload: React.FC = () => {
               <Input
                 title="Thumbnail URL"
                 inputValue={formData.thumbnail_url ?? ""}
-                onChange={(v) =>
-                  handleChange("thumbnail_url", String(v))
-                }
+                onChange={(v) => handleChange("thumbnail_url", String(v))}
               />
             </div>
 
             <Input
               title="Course Description"
               inputValue={formData.course_description}
-              onChange={(v) =>
-                handleChange("course_description", String(v))
-              }
+              onChange={(v) => handleChange("course_description", String(v))}
               required
             />
 
