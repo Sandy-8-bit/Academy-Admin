@@ -161,7 +161,7 @@ export const CourseManagement = () => {
             {course.course_description || "No description provided."}
           </p>
 
-          <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500">
+          <div className="flex flex-wrap items-center gap-3 w-full justify-between text-sm text-slate-500">
             <span className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white/80 px-3 py-1 text-slate-700">
               <Clock3 className="h-4 w-4 text-slate-500" />
               {course.total_hours} hrs
