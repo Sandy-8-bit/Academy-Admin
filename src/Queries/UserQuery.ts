@@ -1,7 +1,7 @@
 import axiosInstance from "../utils/axios";
 import { useQuery } from "@tanstack/react-query";
 import { apiRoutes } from "../routes/apiRoutes";
-import type { UserMeResponse } from "../types/userTypes";
+import type { UserMeResponse } from "../types/UserTypes";
 import { authHandler } from "@/utils/authHandler";
 import { handleApiError } from "@/utils/handleApiError";
 

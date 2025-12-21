@@ -5,7 +5,7 @@ import Input from "../../components/Common/Input";
 import { useSignInMutation } from "../../queries/signInQuery";
 import { appRoutes } from "../../routes/appRoutes";
 
-export const SignInPage = () => {
+ const SignInPage = () => {
   const navigate = useNavigate();
   const { mutate: signIn, isPending } = useSignInMutation();
   const [identifier, setIdentifier] = useState("");
@@ -118,3 +118,5 @@ export const SignInPage = () => {
     </div>
   );
 };
+
+export default SignInPage

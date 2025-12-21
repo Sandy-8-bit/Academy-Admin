@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   BookOpen,
   Clock3,
-  DollarSign,
   Edit3,
   IndianRupee,
   MoreVertical,
@@ -13,7 +12,7 @@ import {
 import { useFetchCourses, useDeleteCourse } from "@/queries/CourseQuery";
 import type { CourseResponse } from "@/types/courseTypes";
 
-export const CourseManagement = () => {
+ const CourseManagement = () => {
   const navigate = useNavigate();
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
@@ -39,13 +38,7 @@ export const CourseManagement = () => {
     }
   };
 
-  const currencyFormatter = useMemo(() => {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: "INR",
-      maximumFractionDigits: 0,
-    });
-  }, []);
+
 
   const handleEdit = (course: CourseResponse) => {
     setActiveMenuId(null);
@@ -182,7 +175,7 @@ export const CourseManagement = () => {
 
   const renderSkeletons = () => (
     <>
-      {[...Array(3)].map((_, index) => (
+      {[...Array(3)].map((_, ) => (
         <div
           key={`skeleton-₹{index}`}
           className="animate-pulse rounded-3xl border border-slate-200 bg-white"
@@ -268,3 +261,5 @@ export const CourseManagement = () => {
     </main>
   );
 };
+
+export default CourseManagement

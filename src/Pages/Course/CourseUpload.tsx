@@ -5,7 +5,7 @@ import {
   useCreateCourse,
   useUpdateCourse,
   useDeleteCourse,
-} from "../../queries/courseQuery";
+} from "../../queries/CourseQuery";
 import type { CourseRequest, CourseResponse } from "../../types/CourseTypes";
 import Input from "../../components/Common/Input";
 import ButtonSm from "../../components/Common/Button";

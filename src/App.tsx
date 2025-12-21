@@ -1,32 +1,41 @@
 import { Routes, Route } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import MainLayout from "./components/Layout/Mainlayout/MainLayout";
-
-// Pages
-import AdminDashboard from "./Pages/Home/HomePage";
-import { CourseManagement } from "./Pages/Course/CourseManagement";
-import { SignInPage } from "./Pages/Auth/Auth";
 import { appRoutes } from "./routes/appRoutes";
+import { Spinner } from "./components/Common/Buttons";
+
+// 🔹 Lazy-loaded pages
+const SignInPage = lazy(() => import("./Pages/Auth/Auth"));
+const AdminDashboard = lazy(() => import("./Pages/Home/HomePage"));
+const CourseManagement = lazy(() =>
+  import("./Pages/Course/CourseManagement")
+);
+
+
 
 function App() {
   return (
-    <Routes>
-      {/* 🔓 Public Routes */}
-      <Route path={appRoutes.signInPage} element={<SignInPage />} />
+    <Suspense fallback={<Spinner />}>
+      <Routes>
+        {/* 🔓 Public Routes */}
+        <Route path={appRoutes.signInPage} element={<SignInPage />} />
 
-      <Route element={<MainLayout />}>
-        {/* Dashboard */}
-        <Route path={appRoutes.dashboard} element={<AdminDashboard />} />
+        {/* 🔐 Protected / Layout Routes */}
+        <Route element={<MainLayout />}>
+          {/* Dashboard */}
+          <Route
+            path={appRoutes.dashboard}
+            element={<AdminDashboard />}
+          />
 
-        {/* Management */}
-        <Route path={appRoutes.course.path} element={<CourseManagement />} />
-
-        {/* Management → Create Pages */}
-        {/* <Route
-          path={appRoutes.management.children.courseCreate}
-          element={<CourseUpload />}
-        /> */}
-      </Route>
-    </Routes>
+          {/* Course Management */}
+          <Route
+            path={appRoutes.course.path}
+            element={<CourseManagement />}
+          />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 }
 
