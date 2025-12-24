@@ -51,9 +51,9 @@ export const ButtonSm: React.FC<ButtonSmProps> = ({
     "btn-sm flex items-center justify-center gap-2 rounded-[9px] px-3 py-2 text-sm select-none transition-all duration-200 ease-in-out";
 
   const stateClasses = {
-    default: "bg-blue-900 text-white hover:bg-blue-800 active:bg-blue-700",
+    default: "bg-gray-900 text-white hover:bg-gray-800 active:bg-gray-700",
     outline:
-      "border border-blue-900 text-blue-900 hover:bg-blue-50 active:bg-blue-100",
+      "border border-gray-900 text-gray-900 hover:bg-gray-50 active:bg-gray-100",
     danger: "bg-[#DC3545] text-white hover:bg-[#BB2D3B] active:bg-[#A52834]",
   };
 

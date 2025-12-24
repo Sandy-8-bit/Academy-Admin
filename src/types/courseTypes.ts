@@ -3,17 +3,16 @@ export interface CourseResponse {
   course_name: string;
   total_hours: number;
   price: number;
-  course_description: string;
+  description: string;
   thumbnail_url: string;
-  createdAt: string; // ISO date string
-  updatedAt: string; // ISO date string
+  created_at: string; // ISO date string
+  updated_at: string; // ISO date string
 }
 
 export interface CourseRequest {
   course_name: string;
   total_hours: number;
   price: number;
-  course_description: string;
+  description: string;
   thumbnail_url?: string;
 }
-

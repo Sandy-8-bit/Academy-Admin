@@ -3,7 +3,7 @@ export interface UserMe {
   email: string;
   name: string;
   role: "admin" | "user"; // extend if more roles exist
-  createdAt: string; // ISO date string
+  created_at: string; // ISO date string
 }
 
 export interface UserMeResponse {

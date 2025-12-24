@@ -1,17 +1,17 @@
 import React, { useState } from "react";
-import { Upload, X, AlertCircle } from "lucide-react";
+import { X } from "lucide-react";
 import {
   useFetchCourses,
   useCreateCourse,
   useUpdateCourse,
   useDeleteCourse,
-} from "../../queries/CourseQuery";
-import type { CourseRequest, CourseResponse } from "../../types/CourseTypes";
+} from "../../queries/courseQuery";
+import type { CourseRequest, CourseResponse } from "../../types/courseTypes";
 import Input from "../../components/Common/Input";
 import ButtonSm from "../../components/Common/Button";
 import GenericTable from "../../components/Common/GenericTable";
 import type { DataCell } from "../../components/Common/GenericTable";
-import ConfirmDeletePopup from "./ConfirmDeletePopup";
+import ConfirmDeletePopup from "@components/Common/ConfirmDeletePopup";
 
 /* -------------------- initial state -------------------- */
 
@@ -19,7 +19,7 @@ const emptyCourse: CourseRequest = {
   course_name: "",
   total_hours: 0,
   price: 0,
-  course_description: "",
+  description: "",
   thumbnail_url: "",
 };
 
@@ -112,7 +112,7 @@ const CourseUpload: React.FC = () => {
       course_name: course.course_name,
       total_hours: course.total_hours,
       price: course.price,
-      course_description: course.course_description,
+      description: course.description,
       thumbnail_url: course.thumbnail_url ?? "",
     });
     setShowForm(true);
@@ -180,8 +180,8 @@ const CourseUpload: React.FC = () => {
 
             <Input
               title="Course Description"
-              inputValue={formData.course_description}
-              onChange={(v) => handleChange("course_description", String(v))}
+              inputValue={formData.description}
+              onChange={(v) => handleChange("description", String(v))}
               required
             />
 

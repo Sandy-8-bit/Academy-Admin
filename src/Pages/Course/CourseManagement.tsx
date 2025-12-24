@@ -5,17 +5,19 @@ import {
   BookOpen,
   Clock3,
   Edit3,
-  IndianRupee,
   MoreVertical,
   Trash2,
 } from "lucide-react";
-import { useFetchCourses, useDeleteCourse } from "@/queries/CourseQuery";
+import { useFetchCourses, useDeleteCourse } from "@/queries/courseQuery";
+import ConfirmDeletePopup from "@components/Common/ConfirmDeletePopup";
 import type { CourseResponse } from "@/types/courseTypes";
 
- const CourseManagement = () => {
+const CourseManagement = () => {
   const navigate = useNavigate();
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [courseToDelete, setCourseToDelete] =
+    useState<CourseResponse | null>(null);
   const { data: courses = [], isLoading, isError, refetch } = useFetchCourses();
   const { mutate: deleteCourse, isPending: isDeleting } = useDeleteCourse();
 
@@ -38,8 +40,6 @@ import type { CourseResponse } from "@/types/courseTypes";
     }
   };
 
-
-
   const handleEdit = (course: CourseResponse) => {
     setActiveMenuId(null);
     navigate(`/management/course/${course.id}/edit`, {
@@ -47,43 +47,48 @@ import type { CourseResponse } from "@/types/courseTypes";
     });
   };
 
-  const handleDelete = (courseId: string) => {
+  const handleDelete = (course: CourseResponse) => {
     setActiveMenuId(null);
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this course? This action cannot be undone."
-    );
-    if (!confirmDelete) return;
+    setCourseToDelete(course);
+  };
+
+  const confirmCourseDeletion = () => {
+    if (!courseToDelete) return;
+    const courseId = String(courseToDelete.id);
     setPendingDeleteId(courseId);
     deleteCourse(courseId, {
-      onSettled: () => setPendingDeleteId(null),
+      onSettled: () => {
+        setPendingDeleteId(null);
+        setCourseToDelete(null);
+      },
     });
   };
 
   const renderMenu = (course: CourseResponse) => {
     if (activeMenuId !== course.id) return null;
     return (
-      <div className="absolute right-3 overflow-clip top-13 z-20 w-48 rounded-md border border-slate-100 bg-white shadow-2xl ">
+      <div className="absolute right-3 overflow-clip top-13 z-20 w-48 rounded-sm border border-slate-100 bg-white shadow-2xl">
         <button
           type="button"
-          className="flex cursor-pointer w-full items-center gap-2 px-4 py-3 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+          className="flex cursor-pointer w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-gray-600 transition hover:bg-slate-50"
           onClick={(event) => {
             event.stopPropagation();
             handleEdit(course);
           }}
         >
-          <Edit3 className="h-4 w-4 text-blue-600" />
+          <Edit3 className="h-3.5 w-3.5 text-gray-600" />
           Edit course
         </button>
         <button
           type="button"
-          className="flex w-full cursor-pointer items-center gap-2 px-4 py-3 text-left text-sm font-medium text-red-600 transition hover:bg-red-50"
+          className="flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left text-sm font-medium text-gray-600 transition hover:bg-red-50"
           onClick={(event) => {
             event.stopPropagation();
-            handleDelete(course.id);
+            handleDelete(course);
           }}
           disabled={isDeleting && pendingDeleteId === course.id}
         >
-          <Trash2 className="h-4 w-4" />
+          <Trash2 className="h-3.5 w-3.5 text-gray-600" />
           {isDeleting && pendingDeleteId === course.id
             ? "Deleting..."
             : "Delete"}
@@ -111,7 +116,7 @@ import type { CourseResponse } from "@/types/courseTypes";
             handleCardClick();
           }
         }}
-        className="group relative cursor-pointer rounded-xl border border-slate-200 bg-white  "
+        className="group relative cursor-pointer rounded-xl border border-slate-200 bg-white"
       >
         <button
           type="button"
@@ -124,6 +129,10 @@ import type { CourseResponse } from "@/types/courseTypes";
           <MoreVertical className="h-4 w-4" />
         </button>
         {renderMenu(course)}
+        <span className="flex bg-white rounded-lg px-3 py-1.5 flex-row text-sm w-max absolute cursor-pointer right-3 top-3 left-3 z-30 items-center gap-1.5 font-medium  text-slate-700">
+          <Clock3 className="h-4 w-4 text-slate-700" />
+          {course.total_hours} hrs
+        </span>
 
         <div className="relative h-44 w-full overflow-hidden rounded-t-xl bg-slate-100">
           {!hasThumbnail ? (
@@ -141,7 +150,7 @@ import type { CourseResponse } from "@/types/courseTypes";
           )}
           <div className="absolute bottom-3 left-4 right-4 flex flex-col text-white">
             <p className="text-xs uppercase tracking-widest text-white/80">
-              Published {formatDate(course.createdAt)}
+              Published {formatDate(course.created_at)}
             </p>
             <h3 className="text-lg font-semibold leading-tight">
               {course.course_name}
@@ -150,22 +159,16 @@ import type { CourseResponse } from "@/types/courseTypes";
         </div>
 
         <div className="space-y-4 p-4">
-          <p className="text-sm text-slate-600">
-            {course.course_description || "No description provided."}
+          <p className="text-sm text-slate-600 line-clamp-2 text-ellipsis">
+            {course.description || "No description provided."}
           </p>
 
           <div className="flex flex-wrap items-center gap-3 w-full justify-between text-sm text-slate-500">
-            <span className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white/80 px-3 py-1 text-slate-700">
-              <Clock3 className="h-4 w-4 text-slate-500" />
-              {course.total_hours} hrs
+            <span className="inline-flex items-center gap-1.5 text-xl font-medium py-1 text-gray-900">
+              ₹ {priceLabel}
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-md border border-blue-100 bg-blue-50/60 px-3 py-1 text-blue-700">
-              <IndianRupee className="h-4 w-4 text-blue-600" />
-              {priceLabel}
-            </span>
-            <span className="inline-flex items-center gap-1.5 rounded-md border border-emerald-100 bg-emerald-50/70 px-3 py-1 text-emerald-700">
-              <BookOpen className="h-4 w-4 text-emerald-600" />
-              Updated {formatDate(course.updatedAt)}
+            <span className="inline-flex items-center gap-1.5 rounded-md font-medium border border-emerald-100 bg-emerald-50/70 px-3 py-1 text-emerald-700">
+              Updated {formatDate(course.updated_at)}
             </span>
           </div>
         </div>
@@ -175,9 +178,9 @@ import type { CourseResponse } from "@/types/courseTypes";
 
   const renderSkeletons = () => (
     <>
-      {[...Array(3)].map((_, ) => (
+      {[...Array(3)].map((_, index) => (
         <div
-          key={`skeleton-₹{index}`}
+          key={`skeleton-${index}`}
           className="animate-pulse rounded-3xl border border-slate-200 bg-white"
         >
           <div className="h-56 w-full bg-slate-200" />
@@ -262,4 +265,4 @@ import type { CourseResponse } from "@/types/courseTypes";
   );
 };
 
-export default CourseManagement
+export default CourseManagement;
