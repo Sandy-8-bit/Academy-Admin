@@ -8,7 +8,7 @@ import { Spinner } from "./components/Common/Buttons";
 const SignInPage = lazy(() => import("./Pages/Auth/Auth"));
 const AdminDashboard = lazy(() => import("./Pages/Home/HomePage"));
 const CourseManagement = lazy(() =>
-  import("./Pages/Course/CourseManagement")
+  import("./Pages/Course/Course/CourseManagement")
 );
 
 

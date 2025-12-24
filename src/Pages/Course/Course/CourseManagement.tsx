@@ -8,18 +8,41 @@ import {
   MoreVertical,
   Trash2,
 } from "lucide-react";
-import { useFetchCourses, useDeleteCourse } from "@/queries/courseQuery";
-import ConfirmDeletePopup from "@components/Common/ConfirmDeletePopup";
+import { useFetchCourses, useDeleteCourse } from "@/queries/CourseQuery";
 import type { CourseResponse } from "@/types/courseTypes";
+import CourseFormModal from "./CourseFormModal";
 
 const CourseManagement = () => {
   const navigate = useNavigate();
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
-  const [courseToDelete, setCourseToDelete] =
-    useState<CourseResponse | null>(null);
+  const [courseToDelete, setCourseToDelete] = useState<CourseResponse | null>(
+    null
+  );
   const { data: courses = [], isLoading, isError, refetch } = useFetchCourses();
   const { mutate: deleteCourse, isPending: isDeleting } = useDeleteCourse();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<"create" | "edit">("create");
+  const [selectedCourse, setSelectedCourse] = useState<CourseResponse | null>(
+    null
+  );
+
+  const openCreateModal = () => {
+    setModalMode("create");
+    setSelectedCourse(null);
+    setModalOpen(true);
+  };
+
+  const openEditModal = (course: CourseResponse) => {
+    setModalMode("edit");
+    setSelectedCourse(course);
+    setModalOpen(true);
+  };
+
+  const handleEdit = (course: CourseResponse) => {
+    setActiveMenuId(null);
+    openEditModal(course);
+  };
 
   useEffect(() => {
     if (!activeMenuId) return;
@@ -38,13 +61,6 @@ const CourseManagement = () => {
     } catch {
       return "--";
     }
-  };
-
-  const handleEdit = (course: CourseResponse) => {
-    setActiveMenuId(null);
-    navigate(`/management/course/${course.id}/edit`, {
-      state: { course },
-    });
   };
 
   const handleDelete = (course: CourseResponse) => {
@@ -99,7 +115,8 @@ const CourseManagement = () => {
 
   const CourseCard = ({ course }: { course: CourseResponse }) => {
     const priceLabel = course.price || 0;
-    const hasThumbnail = Boolean(course.thumbnail_url);
+   const hasThumbnail = Boolean(course.thumbnail_url?.trim());
+
 
     const handleCardClick = () => {
       navigate(`/course/${course.id}`);
@@ -134,29 +151,37 @@ const CourseManagement = () => {
           {course.total_hours} hrs
         </span>
 
-        <div className="relative h-44 w-full overflow-hidden rounded-t-xl bg-slate-100">
-          {!hasThumbnail ? (
-            <img
-              src={course.thumbnail_url}
-              alt={course.course_name}
-              className="h-full w-full object-cover"
-              loading="lazy"
-            />
-          ) : (
-            <div className="h-full w-full bg-linear-to-br from-slate-200 to-slate-50" />
-          )}
-          {hasThumbnail && (
-            <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
-          )}
-          <div className="absolute bottom-3 left-4 right-4 flex flex-col text-white">
-            <p className="text-xs uppercase tracking-widest text-white/80">
-              Published {formatDate(course.created_at)}
-            </p>
-            <h3 className="text-lg font-semibold leading-tight">
-              {course.course_name}
-            </h3>
-          </div>
-        </div>
+      <div className="relative h-44 w-full overflow-hidden rounded-t-xl bg-slate-100">
+  {hasThumbnail ? (
+    <img
+      src={course.thumbnail_url}
+      alt={course.course_name}
+      className="h-full w-full object-cover"
+      loading="lazy"
+      onError={(e) => {
+        e.currentTarget.src = "/images/course-placeholder.png";
+      }}
+    />
+  ) : (
+    <div className="flex h-full w-full items-center justify-center bg-slate-200 text-slate-500">
+      No Image
+    </div>
+  )}
+
+  {hasThumbnail && (
+    <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
+  )}
+
+  <div className="absolute bottom-3 left-4 right-4 flex flex-col text-white">
+    <p className="text-xs uppercase tracking-widest text-white/80">
+      Published {formatDate(course.created_at)}
+    </p>
+    <h3 className="text-lg font-semibold leading-tight">
+      {course.course_name}
+    </h3>
+  </div>
+</div>
+
 
         <div className="space-y-4 p-4">
           <p className="text-sm text-slate-600 line-clamp-2 text-ellipsis">
@@ -211,8 +236,8 @@ const CourseManagement = () => {
         </h1>
         <button
           type="button"
-          onClick={() => navigate("/management/course")}
-          className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-black"
+          onClick={openCreateModal}
+          className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-black"
         >
           <BookOpen className="h-4 w-4" />
           New course
@@ -246,8 +271,8 @@ const CourseManagement = () => {
                 </p>
                 <button
                   type="button"
-                  onClick={() => navigate("/management/course")}
-                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-black"
+                  onClick={openCreateModal}
+                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-black"
                 >
                   <BookOpen className="h-4 w-4" />
                   Create a course
@@ -260,6 +285,13 @@ const CourseManagement = () => {
               ))}
           </div>
         )}
+
+        <CourseFormModal
+          open={modalOpen}
+          mode={modalMode}
+          course={selectedCourse}
+          onClose={() => setModalOpen(false)}
+        />
       </section>
     </main>
   );

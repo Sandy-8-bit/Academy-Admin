@@ -14,5 +14,6 @@ export interface CourseRequest {
   total_hours: number;
   price: number;
   description: string;
-  thumbnail_url?: string;
+  file?: File; // ✅ optional
 }
+
