@@ -2,8 +2,9 @@ import { useEffect, useState, useCallback } from "react";
 import { X, ImagePlus, Trash2 } from "lucide-react";
 import Cropper from "react-easy-crop";
 import Input from "../../../components/Common/Input";
-import { useCreateCourse, useUpdateCourse } from "@/queries/courseQuery";
+import { useCreateCourse, useUpdateCourse } from "@/queries/CourseQuery";
 import type { CourseResponse } from "@/types/courseTypes";
+import ButtonSm from "@/components/Common/Button";
 
 /* -------------------------------------------------------------------------- */
 /*                                    TYPES                                   */
@@ -256,6 +257,7 @@ const CourseFormModal = ({
             <Input
               title="Course name"
               required
+              placeholder="Enter Course Name"
               inputValue={form.courseName}
               onChange={(v) => setForm((f) => ({ ...f, courseName: v }))}
             />
@@ -263,12 +265,14 @@ const CourseFormModal = ({
             <div className="grid grid-cols-2 gap-4">
               <Input
                 title="Total hours"
+                placeholder="Enter Total Orders"
                 type="num"
                 inputValue={form.totalHours}
                 onChange={(v) => setForm((f) => ({ ...f, totalHours: v }))}
               />
               <Input
                 title="Price"
+                placeholder="Enter Price"
                 type="num"
                 inputValue={form.price}
                 onChange={(v) => setForm((f) => ({ ...f, price: v }))}
@@ -277,6 +281,7 @@ const CourseFormModal = ({
 
             <Input
               title="Description"
+              placeholder="Enter Description"
               inputValue={form.description}
               onChange={(v) => setForm((f) => ({ ...f, description: v }))}
             />
@@ -313,21 +318,21 @@ const CourseFormModal = ({
 
           {/* Footer */}
           <div className="flex justify-end gap-3 border-t px-6 py-4">
-            <button onClick={onClose}>Cancel</button>
-            <button onClick={handleSubmit} disabled={creating || updating}>
+            <ButtonSm state="outline" onClick={onClose}>Cancel</ButtonSm>
+            <ButtonSm state="default" onClick={handleSubmit} disabled={creating || updating}>
               {creating || updating
                 ? "Saving..."
                 : isEdit
                   ? "Update"
                   : "Create"}
-            </button>
+            </ButtonSm>
           </div>
         </div>
       </div>
 
       {/* Cropper */}
       {image.showCropper && image.preview && (
-        <div className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center">
+        <div className="fixed inset-0 z-60 bg-black/80 flex items-center justify-center">
           <div className="bg-white p-4 rounded-xl w-[90vw] max-w-md">
             <div className="relative h-72">
               <Cropper
@@ -357,12 +362,13 @@ const CourseFormModal = ({
             />
 
             <div className="mt-4 flex justify-end gap-3">
-              <button
+              <ButtonSm
+              state="outline"
                 onClick={() => setImage((p) => ({ ...p, showCropper: false }))}
               >
                 Cancel
-              </button>
-              <button onClick={applyCrop}>Apply</button>
+              </ButtonSm>
+              <ButtonSm state="default" onClick={applyCrop}>Apply</ButtonSm>
             </div>
           </div>
         </div>

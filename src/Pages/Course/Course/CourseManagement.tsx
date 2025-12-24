@@ -8,9 +8,10 @@ import {
   MoreVertical,
   Trash2,
 } from "lucide-react";
-import { useFetchCourses, useDeleteCourse } from "@/queries/courseQuery";
+import { useFetchCourses, useDeleteCourse } from "@/queries/CourseQuery";
 import type { CourseResponse } from "@/types/courseTypes";
 import CourseFormModal from "./CourseFormModal";
+import ConfirmDeletePopup from "./ConfirmDeletePopup";
 
 const CourseManagement = () => {
   const navigate = useNavigate();
@@ -70,8 +71,10 @@ const CourseManagement = () => {
 
   const confirmCourseDeletion = () => {
     if (!courseToDelete) return;
+
     const courseId = String(courseToDelete.id);
     setPendingDeleteId(courseId);
+
     deleteCourse(courseId, {
       onSettled: () => {
         setPendingDeleteId(null);
@@ -235,7 +238,7 @@ const CourseManagement = () => {
         <button
           type="button"
           onClick={openCreateModal}
-          className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-black"
+          className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-black"
         >
           <BookOpen className="h-4 w-4" />
           New course
@@ -289,6 +292,18 @@ const CourseManagement = () => {
           mode={modalMode}
           course={selectedCourse}
           onClose={() => setModalOpen(false)}
+        />
+
+        <ConfirmDeletePopup
+          open={Boolean(courseToDelete)}
+          title="Delete course?"
+          description={`Are you sure you want to delete "${courseToDelete?.course_name}"? This action cannot be undone.`}
+          confirmLabel="Delete"
+          cancelLabel="Cancel"
+          isConfirming={isDeleting}
+          confirmDisabled={isDeleting}
+          onConfirm={confirmCourseDeletion}
+          onCancel={() => setCourseToDelete(null)}
         />
       </section>
     </main>
