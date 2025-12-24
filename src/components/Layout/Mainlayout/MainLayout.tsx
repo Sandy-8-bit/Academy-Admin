@@ -7,7 +7,7 @@ const MainLayout: React.FC = () => {
   const { data, isLoading } = useFetchUserMe();
 
   // 👉 Extract user name safely
-  const userName = data?.data?.name || "User";
+  // const userName = data?.data?.name || "User";
 
   // 👉 Store user details in localStorage once fetched
   useEffect(() => {
@@ -16,13 +16,13 @@ const MainLayout: React.FC = () => {
     }
   }, [data]);
 
-  // 👉 Format date
-  const formattedDate = new Date().toLocaleDateString("en-IN", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
+  // // 👉 Format date
+  // const formattedDate = new Date().toLocaleDateString("en-IN", {
+  //   weekday: "long",
+  //   day: "numeric",
+  //   month: "long",
+  //   year: "numeric",
+  // });
 
   if (isLoading) return null; // replace with loader if needed
 

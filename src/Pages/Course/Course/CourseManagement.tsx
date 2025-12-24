@@ -8,7 +8,7 @@ import {
   MoreVertical,
   Trash2,
 } from "lucide-react";
-import { useFetchCourses, useDeleteCourse } from "@/queries/CourseQuery";
+import { useFetchCourses, useDeleteCourse } from "@/queries/courseQuery";
 import type { CourseResponse } from "@/types/courseTypes";
 import CourseFormModal from "./CourseFormModal";
 
@@ -115,8 +115,7 @@ const CourseManagement = () => {
 
   const CourseCard = ({ course }: { course: CourseResponse }) => {
     const priceLabel = course.price || 0;
-   const hasThumbnail = Boolean(course.thumbnail_url?.trim());
-
+    const hasThumbnail = Boolean(course.thumbnail_url?.trim());
 
     const handleCardClick = () => {
       navigate(`/course/${course.id}`);
@@ -151,37 +150,36 @@ const CourseManagement = () => {
           {course.total_hours} hrs
         </span>
 
-      <div className="relative h-44 w-full overflow-hidden rounded-t-xl bg-slate-100">
-  {hasThumbnail ? (
-    <img
-      src={course.thumbnail_url}
-      alt={course.course_name}
-      className="h-full w-full object-cover"
-      loading="lazy"
-      onError={(e) => {
-        e.currentTarget.src = "/images/course-placeholder.png";
-      }}
-    />
-  ) : (
-    <div className="flex h-full w-full items-center justify-center bg-slate-200 text-slate-500">
-      No Image
-    </div>
-  )}
+        <div className="relative h-44 w-full overflow-hidden rounded-t-xl bg-slate-100">
+          {hasThumbnail ? (
+            <img
+              src={course.thumbnail_url}
+              alt={course.course_name}
+              className="h-full w-full object-cover"
+              loading="lazy"
+              onError={(e) => {
+                e.currentTarget.src = "/images/course-placeholder.png";
+              }}
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-slate-200 text-slate-500">
+              No Image
+            </div>
+          )}
 
-  {hasThumbnail && (
-    <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
-  )}
+          {hasThumbnail && (
+            <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
+          )}
 
-  <div className="absolute bottom-3 left-4 right-4 flex flex-col text-white">
-    <p className="text-xs uppercase tracking-widest text-white/80">
-      Published {formatDate(course.created_at)}
-    </p>
-    <h3 className="text-lg font-semibold leading-tight">
-      {course.course_name}
-    </h3>
-  </div>
-</div>
-
+          <div className="absolute bottom-3 left-4 right-4 flex flex-col text-white">
+            <p className="text-xs uppercase tracking-widest text-white/80">
+              Published {formatDate(course.created_at)}
+            </p>
+            <h3 className="text-lg font-semibold leading-tight">
+              {course.course_name}
+            </h3>
+          </div>
+        </div>
 
         <div className="space-y-4 p-4">
           <p className="text-sm text-slate-600 line-clamp-2 text-ellipsis">

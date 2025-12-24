@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { X, ImagePlus, Trash2 } from "lucide-react";
 import Cropper from "react-easy-crop";
 import Input from "../../../components/Common/Input";
-import { useCreateCourse, useUpdateCourse } from "@/queries/CourseQuery";
+import { useCreateCourse, useUpdateCourse } from "@/queries/courseQuery";
 import type { CourseResponse } from "@/types/courseTypes";
 
 /* -------------------------------------------------------------------------- */
@@ -18,6 +18,24 @@ interface CourseFormModalProps {
   course?: CourseResponse | null;
 }
 
+type CourseFormState = {
+  courseName: string;
+  totalHours: number | "";
+  price: number | "";
+  description: string;
+};
+
+type ImageState = {
+  rawFile: File | null;
+  finalFile: File | null;
+  preview: string | null;
+  showCropper: boolean;
+  crop: { x: number; y: number };
+  zoom: number;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  croppedPixels: any;
+};
+
 /* -------------------------------------------------------------------------- */
 /*                                   HELPERS                                  */
 /* -------------------------------------------------------------------------- */
@@ -31,6 +49,7 @@ const createImage = (url: string): Promise<HTMLImageElement> =>
     image.src = url;
   });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getCroppedImage = async (src: string, crop: any): Promise<File> => {
   const image = await createImage(src);
   const canvas = document.createElement("canvas");
@@ -75,20 +94,22 @@ const CourseFormModal = ({
   const isEdit = mode === "edit";
 
   /* ------------------------------ FORM STATE ------------------------------ */
-  const [courseName, setCourseName] = useState("");
-  const [totalHours, setTotalHours] = useState<number | "">("");
-  const [price, setPrice] = useState<number | "">("");
-  const [description, setDescription] = useState("");
-  const [rawFile, setRawFile] = useState<File | null>(null);
+  const [form, setForm] = useState<CourseFormState>({
+    courseName: "",
+    totalHours: "",
+    price: "",
+    description: "",
+  });
 
-  /* ------------------------------ IMAGE STATE ------------------------------ */
-  const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [finalImage, setFinalImage] = useState<File | null>(null);
-  const [showCropper, setShowCropper] = useState(false);
-
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedPixels, setCroppedPixels] = useState<any>(null);
+  const [image, setImage] = useState<ImageState>({
+    rawFile: null,
+    finalFile: null,
+    preview: null,
+    showCropper: false,
+    crop: { x: 0, y: 0 },
+    zoom: 1,
+    croppedPixels: null,
+  });
 
   const { mutate: createCourse, isPending: creating } = useCreateCourse();
   const { mutate: updateCourse, isPending: updating } = useUpdateCourse();
@@ -98,90 +119,123 @@ const CourseFormModal = ({
     if (!open) return;
 
     if (mode === "create") {
-      setCourseName("");
-      setTotalHours("");
-      setPrice("");
-      setDescription("");
-      setImageSrc(null);
-      setFinalImage(null);
-      setCrop({ x: 0, y: 0 });
-      setZoom(1);
-      setCroppedPixels(null);
-      setShowCropper(false);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setForm({
+        courseName: "",
+        totalHours: "",
+        price: "",
+        description: "",
+      });
+
+      if (image.preview) URL.revokeObjectURL(image.preview);
+
+      setImage({
+        rawFile: null,
+        finalFile: null,
+        preview: null,
+        showCropper: false,
+        crop: { x: 0, y: 0 },
+        zoom: 1,
+        croppedPixels: null,
+      });
     }
 
-    if (isEdit && course) {
-      setCourseName(course.course_name);
-      setTotalHours(course.total_hours);
-      setPrice(Number(course.price));
-      setDescription(course.description ?? "");
-      setImageSrc(course.thumbnail_url || null);
+    if (mode === "edit" && course) {
+      setForm({
+        courseName: course.course_name,
+        totalHours: course.total_hours,
+        price: Number(course.price),
+        description: course.description ?? "",
+      });
+
+      setImage((prev) => ({
+        ...prev,
+        preview: course.thumbnail_url || null,
+      }));
     }
-  }, [open, mode, isEdit, course]);
+  }, [open, mode, course]);
 
   /* ------------------------------ IMAGE HANDLERS ------------------------------ */
-const handleFile = (file?: File) => {
-  if (!file) return;
+  const handleFile = (file?: File) => {
+    if (!file) return;
 
-  setRawFile(file);          // ✅ store original file
-  setFinalImage(file);      // ✅ fallback if no crop
-  setImageSrc(URL.createObjectURL(file));
-  setShowCropper(true);
-};
+    if (image.preview) URL.revokeObjectURL(image.preview);
 
+    const previewUrl = URL.createObjectURL(file);
 
+    setImage((prev) => ({
+      ...prev,
+      rawFile: file,
+      finalFile: file,
+      preview: previewUrl,
+      showCropper: true,
+    }));
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onCropComplete = useCallback((_: any, pixels: any) => {
-    setCroppedPixels(pixels);
+    setImage((prev) => ({ ...prev, croppedPixels: pixels }));
   }, []);
 
-const applyCrop = async () => {
-  if (!imageSrc || !croppedPixels) return;
+  const applyCrop = async () => {
+    if (!image.preview || !image.croppedPixels) return;
 
-  const cropped = await getCroppedImage(imageSrc, croppedPixels);
-  setFinalImage(cropped);               // ✅ overwrite with cropped file
-  setImageSrc(URL.createObjectURL(cropped));
-  setShowCropper(false);
-};
+    const cropped = await getCroppedImage(image.preview, image.croppedPixels);
+
+    URL.revokeObjectURL(image.preview);
+
+    setImage((prev) => ({
+      ...prev,
+      finalFile: cropped,
+      preview: URL.createObjectURL(cropped),
+      showCropper: false,
+    }));
+  };
 
   const removeImage = () => {
-    setImageSrc(null);
-    setFinalImage(null);
+    if (image.preview) URL.revokeObjectURL(image.preview);
+
+    setImage((prev) => ({
+      ...prev,
+      rawFile: null,
+      finalFile: null,
+      preview: null,
+    }));
   };
 
   /* ------------------------------ SUBMIT ------------------------------ */
-const handleSubmit = () => {
-  const formData = new FormData();
+  const handleSubmit = () => {
+    if (!form.courseName || !form.totalHours || !form.price) return;
 
-  formData.append("course_name", courseName);
-  formData.append("total_hours", String(totalHours));
-  formData.append("price", String(price));
-  formData.append("description", description);
+    const formData = new FormData();
+    formData.append("course_name", form.courseName);
+    formData.append("total_hours", String(form.totalHours));
+    formData.append("price", String(form.price));
+    formData.append("description", form.description);
 
-  // ✅ this will now ALWAYS work
-  if (finalImage instanceof File) {
-    formData.append("file", finalImage);
-  }
+    if (image.finalFile) {
+      formData.append("file", image.finalFile);
+    }
 
-  if (isEdit && course) {
-    updateCourse(
-      { courseId: course.id, payload: formData as any },
-      { onSuccess: onClose }
-    );
-  } else {
-    createCourse(formData as any, { onSuccess: onClose });
-  }
-};
-
+    if (isEdit && course) {
+      updateCourse(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        { courseId: course.id, payload: formData as any },
+        { onSuccess: onClose }
+      );
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      createCourse(formData as any, { onSuccess: onClose });
+    }
+  };
 
   if (!open) return null;
 
   /* ------------------------------ UI ------------------------------ */
   return (
     <>
-      {/* Overlay */}
-      <div className="fixed inset-0 z-40 bg-black/40 cursor-pointer" onClick={onClose} />
+      <div className="fixed inset-0 z-40 bg-black/40" onClick={onClose} />
 
-      {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center">
         <div
           className="w-full max-w-2xl rounded-2xl bg-white shadow-xl"
@@ -192,10 +246,7 @@ const handleSubmit = () => {
             <h2 className="text-lg font-semibold">
               {isEdit ? "Edit Course" : "Create Course"}
             </h2>
-            <button
-              onClick={onClose}
-              className="cursor-pointer rounded-full p-1 hover:bg-slate-100"
-            >
+            <button onClick={onClose}>
               <X />
             </button>
           </div>
@@ -205,60 +256,50 @@ const handleSubmit = () => {
             <Input
               title="Course name"
               required
-              inputValue={courseName}
-              onChange={setCourseName}
+              inputValue={form.courseName}
+              onChange={(v) => setForm((f) => ({ ...f, courseName: v }))}
             />
 
             <div className="grid grid-cols-2 gap-4">
               <Input
                 title="Total hours"
                 type="num"
-                inputValue={totalHours}
-                onChange={setTotalHours}
+                inputValue={form.totalHours}
+                onChange={(v) => setForm((f) => ({ ...f, totalHours: v }))}
               />
               <Input
                 title="Price"
                 type="num"
-                inputValue={price}
-                onChange={setPrice}
+                inputValue={form.price}
+                onChange={(v) => setForm((f) => ({ ...f, price: v }))}
               />
             </div>
 
             <Input
               title="Description"
-              inputValue={description}
-              onChange={setDescription}
+              inputValue={form.description}
+              onChange={(v) => setForm((f) => ({ ...f, description: v }))}
             />
 
-            {/* Drag & Drop */}
-            <div
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => {
-                e.preventDefault();
-                handleFile(e.dataTransfer.files?.[0]);
-              }}
-              className="relative flex h-40 cursor-pointer items-center justify-center rounded-xl border-2 border-dashed border-slate-300 text-slate-500 hover:border-slate-400"
-            >
-              {imageSrc ? (
+            {/* Image Upload */}
+            <div className="relative flex h-40 items-center justify-center rounded-xl border-2 border-dashed">
+              {image.preview ? (
                 <div className="relative h-full w-full">
                   <img
-                    src={imageSrc}
-                    alt="Thumbnail preview"
+                    src={image.preview}
                     className="h-full w-full rounded-xl object-cover"
                   />
                   <button
                     onClick={removeImage}
-                    className="absolute right-2 top-2 cursor-pointer rounded-full bg-white p-2 shadow hover:bg-slate-100"
+                    className="absolute right-2 top-2 bg-white p-2 rounded-full"
                   >
                     <Trash2 size={16} />
                   </button>
                 </div>
               ) : (
-                <label className="flex cursor-pointer flex-col items-center gap-2">
+                <label className="flex flex-col items-center gap-2 cursor-pointer">
                   <ImagePlus />
-                  <span className="text-sm">
-                    Drag & drop or click to upload
-                  </span>
+                  <span>Upload thumbnail</span>
                   <input
                     hidden
                     type="file"
@@ -272,39 +313,30 @@ const handleSubmit = () => {
 
           {/* Footer */}
           <div className="flex justify-end gap-3 border-t px-6 py-4">
-            <button
-              onClick={onClose}
-              className="cursor-pointer rounded-full border px-4 py-2 hover:bg-slate-50"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={creating || updating}
-              className="cursor-pointer rounded-full bg-black px-5 py-2 text-white disabled:cursor-not-allowed disabled:opacity-60"
-            >
+            <button onClick={onClose}>Cancel</button>
+            <button onClick={handleSubmit} disabled={creating || updating}>
               {creating || updating
                 ? "Saving..."
                 : isEdit
-                ? "Update"
-                : "Create"}
+                  ? "Update"
+                  : "Create"}
             </button>
           </div>
         </div>
       </div>
 
       {/* Cropper */}
-      {showCropper && imageSrc && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80">
-          <div className="w-[90vw] max-w-md rounded-xl bg-white p-4">
+      {image.showCropper && image.preview && (
+        <div className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center">
+          <div className="bg-white p-4 rounded-xl w-[90vw] max-w-md">
             <div className="relative h-72">
               <Cropper
-                image={imageSrc}
-                crop={crop}
-                zoom={zoom}
+                image={image.preview}
+                crop={image.crop}
+                zoom={image.zoom}
                 aspect={16 / 9}
-                onCropChange={setCrop}
-                onZoomChange={setZoom}
+                onCropChange={(c) => setImage((prev) => ({ ...prev, crop: c }))}
+                onZoomChange={(z) => setImage((prev) => ({ ...prev, zoom: z }))}
                 onCropComplete={onCropComplete}
               />
             </div>
@@ -314,24 +346,23 @@ const handleSubmit = () => {
               min={1}
               max={3}
               step={0.1}
-              value={zoom}
-              onChange={(e) => setZoom(Number(e.target.value))}
-              className="mt-4 w-full cursor-pointer"
+              value={image.zoom}
+              onChange={(e) =>
+                setImage((prev) => ({
+                  ...prev,
+                  zoom: Number(e.target.value),
+                }))
+              }
+              className="mt-4 w-full"
             />
 
             <div className="mt-4 flex justify-end gap-3">
               <button
-                onClick={() => setShowCropper(false)}
-                className="cursor-pointer rounded px-4 py-2 hover:bg-slate-100"
+                onClick={() => setImage((p) => ({ ...p, showCropper: false }))}
               >
                 Cancel
               </button>
-              <button
-                onClick={applyCrop}
-                className="cursor-pointer rounded bg-black px-4 py-2 text-white"
-              >
-                Apply
-              </button>
+              <button onClick={applyCrop}>Apply</button>
             </div>
           </div>
         </div>
