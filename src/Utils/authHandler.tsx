@@ -3,7 +3,7 @@ import { appRoutes } from "@/routes/appRoutes";
 import { toast } from "react-hot-toast";
 
 export function authHandler() {
-  const token = Cookies.get("token");
+  const token = Cookies.get("token-dmif");
 
   if (!token) {
     toast.error("Unauthorized. Please login again.");

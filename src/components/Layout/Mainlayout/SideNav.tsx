@@ -79,10 +79,10 @@ const SideNav: React.FC = () => {
     logout(undefined, {
       onSuccess: () => {
         // ✅ Clear cookies
-        Cookies.remove("token", { path: "/" });
+        Cookies.remove("token-dmif", { path: "/" });
 
         // ✅ Clear localStorage (auth-related or full)
-        localStorage.removeItem("token");
+        localStorage.removeItem("token-dmif");
         localStorage.removeItem("user"); // if exists
         localStorage.removeItem("supabase.auth.token"); // safety
 
