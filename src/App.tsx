@@ -3,15 +3,14 @@ import { lazy, Suspense } from "react";
 import MainLayout from "./components/Layout/Mainlayout/MainLayout";
 import { appRoutes } from "./routes/appRoutes";
 import { Spinner } from "./components/Common/Buttons";
+import CourseContentsPage from "./Pages/Course/Course/CourseDetails";
 
 // 🔹 Lazy-loaded pages
 const SignInPage = lazy(() => import("./Pages/Auth/Auth"));
 const AdminDashboard = lazy(() => import("./Pages/Home/HomePage"));
-const CourseManagement = lazy(() =>
-  import("./Pages/Course/Course/CourseManagement")
+const CourseManagement = lazy(
+  () => import("./Pages/Course/Course/CourseManagement")
 );
-
-
 
 function App() {
   return (
@@ -23,15 +22,13 @@ function App() {
         {/* 🔐 Protected / Layout Routes */}
         <Route element={<MainLayout />}>
           {/* Dashboard */}
-          <Route
-            path={appRoutes.dashboard}
-            element={<AdminDashboard />}
-          />
+          <Route path={appRoutes.dashboard} element={<AdminDashboard />} />
 
           {/* Course Management */}
+          <Route path={appRoutes.course.path} element={<CourseManagement />} />
           <Route
-            path={appRoutes.course.path}
-            element={<CourseManagement />}
+            path={appRoutes.course.children.courseDetails}
+            element={<CourseContentsPage />}
           />
         </Route>
       </Routes>

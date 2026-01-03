@@ -4,6 +4,8 @@ export const appRoutes = {
 
   course: {
     path: "/course",
-    children: {},
+    children: {
+      courseDetails: "/course/:courseId",
+    },
   },
 };

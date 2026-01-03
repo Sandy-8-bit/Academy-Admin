@@ -8,7 +8,7 @@ import {
   MoreVertical,
   Trash2,
 } from "lucide-react";
-import { useFetchCourses, useDeleteCourse } from "@/queries/CourseQuery";
+import { useFetchCourses, useDeleteCourse } from "@/queries/courseQuery";
 import type { CourseResponse } from "@/types/courseTypes";
 import CourseFormModal from "./CourseFormModal";
 import ConfirmDeletePopup from "./ConfirmDeletePopup";

@@ -5,6 +5,7 @@ import { apiRoutes } from "../routes/apiRoutes";
 import type { CourseResponse, CourseRequest } from "../types/courseTypes";
 import { authHandler } from "@/utils/authHandler";
 import { handleApiError } from "@/utils/handleApiError";
+import type { CourseContentsResponse } from "@/types/courseContent";
 
 /* -------------------- GET ALL COURSES -------------------- */
 export const useFetchCourses = () => {
@@ -136,26 +137,25 @@ export const useDeleteCourse = () => {
 
 /* -------------------- GET COURSE BY ID -------------------- */
 export const useFetchCourseById = (courseId: string) => {
-  const fetchCourseById = async (): Promise<CourseResponse> => {
+  const fetchCourseById = async (): Promise<CourseContentsResponse> => {
     const token = authHandler();
-    try {
-      const res = await axiosInstance.get<CourseResponse>(
-        `${apiRoutes.course}/${courseId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return res.data;
-    } catch (error) {
-      handleApiError(error, "fetch course");
-    }
+
+    const res = await axiosInstance.get<CourseContentsResponse>(
+      `${apiRoutes.course}/${courseId}/contents`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    return res.data;
   };
 
   return useQuery({
-    queryKey: ["course", courseId],
+    queryKey: ["course-contents", courseId],
     queryFn: fetchCourseById,
+    retry: 1,
     enabled: !!courseId,
   });
 };
