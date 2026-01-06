@@ -12,6 +12,7 @@ import { useFetchCourses, useDeleteCourse } from "@/queries/CourseQuery";
 import type { CourseResponse } from "@/types/courseTypes";
 import CourseFormModal from "./CourseFormModal";
 import ConfirmDeletePopup from "./ConfirmDeletePopup";
+import ButtonSm from "@/components/Common/Button";
 
 const CourseManagement = () => {
   const navigate = useNavigate();
@@ -235,14 +236,15 @@ const CourseManagement = () => {
           />
           Course Library
         </h1>
-        <button
+        <ButtonSm
+        state="default"
           type="button"
           onClick={openCreateModal}
-          className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-black"
+          // className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-black"
         >
           <BookOpen className="h-4 w-4" />
           New course
-        </button>
+        </ButtonSm>
       </header>
       <div className="divider min-w-full border border-[#F1F1F1]" />
 

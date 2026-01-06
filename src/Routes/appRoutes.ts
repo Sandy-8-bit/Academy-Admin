@@ -1,9 +1,10 @@
 export const appRoutes = {
   signInPage: "/auth",
   dashboard: "/",
-
   course: {
     path: "/course",
-    children: {},
+    children: {
+      courseTiers: "/course/:id",
+    },
   },
 };

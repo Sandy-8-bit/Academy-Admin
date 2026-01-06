@@ -4,9 +4,6 @@ import { motion } from "motion/react";
 import {
   LayoutDashboardIcon,
   LogOut,
-  Menu,
-  MenuIcon,
-  MenuSquareIcon,
   PackageOpen,
   type LucideIcon,
 } from "lucide-react";

@@ -1,5 +1,5 @@
 import React from "react";
-import { useLongPress } from "../../hooks/useLongPress";
+import { useLongPress } from "../../Hooks/useLongPress";
 
 type ButtonState = "default" | "outline" | "danger";
 

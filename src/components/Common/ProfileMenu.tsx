@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Moon, Sun, LogOut } from "lucide-react";
 import { appRoutes } from "../../routes/appRoutes";
-import useClickOutside from "../../hooks/useClickOutside";
+import useClickOutside from "../../Hooks/useClickOutside";
 
 type UserMe = {
   name?: string;
