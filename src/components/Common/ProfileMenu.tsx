@@ -54,7 +54,7 @@ export default function ProfileMenu() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("token-dmif");
     localStorage.removeItem("userMe");
     window.location.href = appRoutes.signInPage;
   };
