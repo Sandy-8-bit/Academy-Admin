@@ -11,7 +11,7 @@ import { appRoutes } from "../../../routes/appRoutes";
 import { useLogoutMutation } from "../../../queries/signInQuery";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import ButtonSm from "../../Common/Button";
+import ButtonSm from "../../common/Button";
 
 type NavigationSection = "main" | "orders" | "settings";
 

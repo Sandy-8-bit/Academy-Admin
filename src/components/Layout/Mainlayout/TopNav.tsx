@@ -1,10 +1,10 @@
-import { motion } from 'framer-motion'
-import NotificationCenter from '../../Common/NotificationCenter'
-import ProfileMenu from '../../Common/ProfileMenu'
+import { motion } from "framer-motion";
+import NotificationCenter from "../../common/NotificationCenter";
+import ProfileMenu from "../../common/ProfileMenu";
 
 interface TopNavProps {
-  userName?: string
-  formattedDate?: string
+  userName?: string;
+  formattedDate?: string;
 }
 export const TopNav: React.FC<TopNavProps> = ({ userName, formattedDate }) => {
   return (
@@ -79,5 +79,5 @@ export const TopNav: React.FC<TopNavProps> = ({ userName, formattedDate }) => {
         </motion.div>
       </div>
     </motion.header>
-  )
-}
+  );
+};

@@ -1,5 +1,5 @@
-import { TopNav } from "@/components/Layout/Mainlayout/TopNav";
-import { useFetchUserMe } from "@/queries/UserQuery";
+import { TopNav } from "@/components/Layout/mainLayout/TopNav";
+import { useFetchUserMe } from "@/queries/userQuery";
 import {
   BookOpen,
   BarChart3,
@@ -155,6 +155,16 @@ export default function AdminDashboard() {
     year: "numeric",
   });
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="loader mb-4"></div>
+          <p className="text-gray-600">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gray-50">
       <TopNav userName={userName} formattedDate={formattedDate} />

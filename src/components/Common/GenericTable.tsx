@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 // Replace these with your actual components paths if different
-import SearchSm from "../Common/SearchSm";
+import SearchSm from "./SearchSm";
 import ButtonSm from "./Buttons";
 import DropdownSelect from "./DropDown";
 import PaginationControls from "./Pagination";
@@ -357,7 +357,7 @@ export default function GenericTable({
   const hasActions = onEdit || onDelete || onView;
 
   const defaultRowKey = (r: any, i: number) =>
-    rowKey ? rowKey(r, i) : r.id ?? r.code ?? i;
+    rowKey ? rowKey(r, i) : (r.id ?? r.code ?? i);
 
   return (
     <div
@@ -551,8 +551,8 @@ export default function GenericTable({
                         ) : (
                           <span>
                             {Array.isArray(value)
-                              ? value[1] ?? value[0] ?? "-"
-                              : value ?? "-"}
+                              ? (value[1] ?? value[0] ?? "-")
+                              : (value ?? "-")}
                           </span>
                         )}
                       </div>

@@ -1,10 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
 import { X, ImagePlus, Trash2 } from "lucide-react";
 import Cropper from "react-easy-crop";
-import Input from "../../../components/Common/Input";
-import { useCreateCourse, useUpdateCourse } from "@/queries/CourseQuery";
+import Input from "../../../components/common/Input";
+import { useCreateCourse, useUpdateCourse } from "@/queries/courseQuery";
 import type { CourseResponse } from "@/types/courseTypes";
-import ButtonSm from "@/components/Common/Button";
+import ButtonSm from "@/components/common/Button";
 
 /* -------------------------------------------------------------------------- */
 /*                                    TYPES                                   */
@@ -318,8 +318,14 @@ const CourseFormModal = ({
 
           {/* Footer */}
           <div className="flex justify-end gap-3 border-t px-6 py-4">
-            <ButtonSm state="outline" onClick={onClose}>Cancel</ButtonSm>
-            <ButtonSm state="default" onClick={handleSubmit} disabled={creating || updating}>
+            <ButtonSm state="outline" onClick={onClose}>
+              Cancel
+            </ButtonSm>
+            <ButtonSm
+              state="default"
+              onClick={handleSubmit}
+              disabled={creating || updating}
+            >
               {creating || updating
                 ? "Saving..."
                 : isEdit
@@ -363,12 +369,14 @@ const CourseFormModal = ({
 
             <div className="mt-4 flex justify-end gap-3">
               <ButtonSm
-              state="outline"
+                state="outline"
                 onClick={() => setImage((p) => ({ ...p, showCropper: false }))}
               >
                 Cancel
               </ButtonSm>
-              <ButtonSm state="default" onClick={applyCrop}>Apply</ButtonSm>
+              <ButtonSm state="default" onClick={applyCrop}>
+                Apply
+              </ButtonSm>
             </div>
           </div>
         </div>

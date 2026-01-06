@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import SideNav from "./SideNav";
-import { useFetchUserMe } from "@/queries/UserQuery";
+import { useFetchUserMe } from "@/queries/userQuery";
 
 const MainLayout: React.FC = () => {
   const { data, isLoading } = useFetchUserMe();

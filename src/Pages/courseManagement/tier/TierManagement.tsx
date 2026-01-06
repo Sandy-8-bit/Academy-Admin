@@ -6,8 +6,8 @@ import { useFetchTiersByCourse, useDeleteTier } from "@/queries/tierQuery";
 import type { Tier } from "@/types/tierTypes";
 
 import TierFormModal from "./TierFormModal";
-import ConfirmDeletePopup from "../ConfirmDeletePopup";
-import ButtonSm from "@/components/Common/Button";
+import ConfirmDeletePopup from "@components/common/ConfirmDeletePopup";
+import ButtonSm from "@/components/common/Button";
 
 const TierManagement = () => {
   const { id: courseId } = useParams<{ id: string }>();
@@ -20,8 +20,9 @@ const TierManagement = () => {
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
 
   const { data, isLoading } = useFetchTiersByCourse(courseId!);
-  const { mutate: deleteTier, isPending: isDeleting } =
-    useDeleteTier(courseId!);
+  const { mutate: deleteTier, isPending: isDeleting } = useDeleteTier(
+    courseId!
+  );
 
   // ✅ SAFE fallback
   const tiers = data?.tiers ?? [];
@@ -54,7 +55,7 @@ const TierManagement = () => {
 
   const renderMenu = (tier: Tier) =>
     activeMenuId === tier.id && (
-      <div className="absolute right-3 top-10 z-20 w-44 rounded-md border bg-white shadow-lg">
+      <div className="absolute right-3 top-10 z-20 w-44 rounded-md border overflow-clip bg-white shadow-lg">
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -79,7 +80,7 @@ const TierManagement = () => {
     );
 
   return (
-    <main className="layout-container m-4 min-h-[95vh] rounded-xl border bg-white">
+    <main className="layout-container m-4 min-h-[95vh] rounded-[12px] border-2 border-[#F1F1F1] bg-white">
       {/* Header */}
       <header className="flex items-center justify-between p-4">
         <h1 className="flex items-center gap-2 text-xl font-semibold">
@@ -87,15 +88,11 @@ const TierManagement = () => {
           Course Tiers
         </h1>
 
-         <ButtonSm
-              state="default"
-              
-              onClick={openCreateModal}
-            >
-              <Layers size={16} /> Create New Tier
-            </ButtonSm>
+        <ButtonSm state="default" onClick={openCreateModal}>
+          <Layers size={16} /> Create New Tier
+        </ButtonSm>
       </header>
-<div className="divider min-w-full border border-[#F1F1F1]" />
+      <div className="divider min-w-full border border-[#F1F1F1]" />
       {/* Content */}
       <section className="p-4">
         {isLoading && <p>Loading tiers...</p>}
@@ -110,7 +107,6 @@ const TierManagement = () => {
               This course doesn’t have any tiers yet. Create one to organize
               your content.
             </p>
-          
           </div>
         )}
 
@@ -124,9 +120,7 @@ const TierManagement = () => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    setActiveMenuId(
-                      activeMenuId === tier.id ? null : tier.id
-                    );
+                    setActiveMenuId(activeMenuId === tier.id ? null : tier.id);
                   }}
                   className="absolute cursor-pointer right-3 top-3 rounded-md p-1 text-slate-500 hover:bg-slate-100"
                 >

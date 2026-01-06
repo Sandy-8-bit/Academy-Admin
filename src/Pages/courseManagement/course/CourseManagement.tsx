@@ -8,11 +8,11 @@ import {
   MoreVertical,
   Trash2,
 } from "lucide-react";
-import { useFetchCourses, useDeleteCourse } from "../../../queries/CourseQuery";
+import { useFetchCourses, useDeleteCourse } from "../../../queries/courseQuery";
 import type { CourseResponse } from "@/types/courseTypes";
 import CourseFormModal from "./CourseFormModal";
-import ConfirmDeletePopup from "./ConfirmDeletePopup";
-import ButtonSm from "@/components/Common/Button";
+import ConfirmDeletePopup from "@components/common/ConfirmDeletePopup";
+import ButtonSm from "@/components/common/Button";
 
 const CourseManagement = () => {
   const navigate = useNavigate();
@@ -237,7 +237,7 @@ const CourseManagement = () => {
           Course Library
         </h1>
         <ButtonSm
-        state="default"
+          state="default"
           type="button"
           onClick={openCreateModal}
           // className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-black"

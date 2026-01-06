@@ -1,15 +1,15 @@
 import { Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
-import MainLayout from "./components/Layout/Mainlayout/MainLayout";
+import MainLayout from "./components/Layout/mainLayout/MainLayout";
 import { appRoutes } from "./routes/appRoutes";
-import { Spinner } from "./components/Common/Buttons";
-import TierManagement from "./Pages/Course/Tier/TierManagement";
+import { Spinner } from "./components/common/Buttons";
+import TierManagement from "./pages/courseManagement/tier/TierManagement";
 
 // 🔹 Lazy-loaded pages
-const SignInPage = lazy(() => import("./Pages/Auth/Auth"));
-const AdminDashboard = lazy(() => import("./Pages/Home/HomePage"));
+const SignInPage = lazy(() => import("./pages/auth/Auth"));
+const AdminDashboard = lazy(() => import("./pages/home/HomePage"));
 const CourseManagement = lazy(
-  () => import("./Pages/Course/Course/CourseManagement")
+  () => import("./pages/courseManagement/course/CourseManagement")
 );
 
 function App() {
@@ -26,9 +26,8 @@ function App() {
 
           {/* Course Management */}
           <Route path={appRoutes.course.path} element={<CourseManagement />} />
-         
 
-          <Route 
+          <Route
             path={appRoutes.course.children.courseTiers}
             element={<TierManagement />}
           />

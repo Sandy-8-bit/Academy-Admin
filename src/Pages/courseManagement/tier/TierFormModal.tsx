@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
-import Input from "@/components/Common/Input";
-import ButtonSm from "@/components/Common/Button";
-import {
-  useCreateTier,
-  useUpdateTier,
-} from "@/queries/tierQuery";
+import Input from "@/components/common/Input";
+import ButtonSm from "@/components/common/Button";
+import { useCreateTier, useUpdateTier } from "@/queries/tierQuery";
 import type { Tier, TierPost } from "@/types/tierTypes";
 
 interface Props {
@@ -15,13 +12,7 @@ interface Props {
   onClose: () => void;
 }
 
-const TierFormModal = ({
-  open,
-  mode,
-  tier,
-  courseId,
-  onClose,
-}: Props) => {
+const TierFormModal = ({ open, mode, tier, courseId, onClose }: Props) => {
   const [form, setForm] = useState<TierPost>({
     tier_number: "",
     tier_name: "",
@@ -31,28 +22,27 @@ const TierFormModal = ({
   const createTier = useCreateTier(courseId);
   const updateTier = useUpdateTier();
 
+  useEffect(() => {
+    if (!open) return;
 
-useEffect(() => {
-  if (!open) return;
+    if (mode === "create") {
+      // 🔥 RESET FORM
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setForm({
+        tier_number: "",
+        tier_name: "",
+        description: "",
+      });
+    }
 
-  if (mode === "create") {
-    // 🔥 RESET FORM
-    setForm({
-      tier_number: "",
-      tier_name: "",
-      description: "",
-    });
-  }
-
-  if (mode === "edit" && tier) {
-    setForm({
-      tier_number: String(tier.tier_number),
-      tier_name: tier.tier_name,
-      description: tier.description ?? "",
-    });
-  }
-}, [mode, tier, open]);
-
+    if (mode === "edit" && tier) {
+      setForm({
+        tier_number: String(tier.tier_number),
+        tier_name: tier.tier_name,
+        description: tier.description ?? "",
+      });
+    }
+  }, [mode, tier, open]);
 
   if (!open) return null;
 
@@ -81,9 +71,7 @@ useEffect(() => {
             placeholder="Enter Tier Number"
             required
             inputValue={form.tier_number}
-            onChange={(v) =>
-              setForm({ ...form, tier_number: String(v) })
-            }
+            onChange={(v) => setForm({ ...form, tier_number: String(v) })}
           />
           <Input
             title="Tier Name"

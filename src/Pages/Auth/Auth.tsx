@@ -1,7 +1,7 @@
 import { type FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ButtonSm from "../../components/Common/Button";
-import Input from "../../components/Common/Input";
+import ButtonSm from "../../components/common/Button";
+import Input from "../../components/common/Input";
 import { useSignInMutation } from "../../queries/signInQuery";
 import { appRoutes } from "../../routes/appRoutes";
 

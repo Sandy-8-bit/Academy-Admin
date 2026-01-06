@@ -1,5 +1,5 @@
 import { AlertTriangle } from "lucide-react";
-import ButtonSm from "@components/Common/Button";
+import ButtonSm from "@/components/common/Button";
 
 interface ConfirmDeletePopupProps {
   open: boolean;
