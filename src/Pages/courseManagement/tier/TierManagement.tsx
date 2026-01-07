@@ -7,7 +7,6 @@ import type { Tier } from "@/types/tierTypes";
 
 import TierFormModal from "./TierFormModal";
 import ConfirmDeletePopup from "@components/common/ConfirmDeletePopup";
-import ButtonSm from "@/components/common/Button";
 
 const TierManagement = () => {
   const { id: courseId } = useParams<{ id: string }>();
@@ -55,16 +54,16 @@ const TierManagement = () => {
 
   const renderMenu = (tier: Tier) =>
     activeMenuId === tier.id && (
-      <div className="absolute right-3 top-10 z-20 w-44 rounded-md border overflow-clip bg-white shadow-lg">
+      <div className="absolute right-3 top-10 z-20 w-44 rounded-md border border-[#e5e7eb] overflow-hidden bg-white shadow-lg">
         <button
           onClick={(e) => {
             e.stopPropagation();
             openEditModal(tier);
             setActiveMenuId(null);
           }}
-          className="flex w-full items-center gap-2 px-4 py-3 text-sm hover:bg-slate-50"
+          className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-[#1f2937] hover:bg-[#f3f4f6] transition-colors"
         >
-          <Edit3 size={14} /> Edit
+          <Edit3 size={14} className="text-[#6b7280]" /> Edit
         </button>
         <button
           onClick={(e) => {
@@ -72,7 +71,7 @@ const TierManagement = () => {
             setTierToDelete(tier);
             setActiveMenuId(null);
           }}
-          className="flex w-full items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50"
+          className="flex w-full items-center gap-2 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
         >
           <Trash2 size={14} /> Delete
         </button>
@@ -80,82 +79,108 @@ const TierManagement = () => {
     );
 
   return (
-    <main className="layout-container m-4 min-h-[95vh] rounded-[12px] border-2 border-[#F1F1F1] bg-white">
+    <div className="min-h-screen bg-[#f8f9fa]">
       {/* Header */}
-      <header className="flex items-center justify-between p-4">
-        <h1 className="flex items-center gap-2 text-xl font-semibold">
-          <ArrowLeft onClick={() => navigate(-1)} className="cursor-pointer" />
-          Course Tiers
-        </h1>
-
-        <ButtonSm state="default" onClick={openCreateModal}>
-          <Layers size={16} /> Create New Tier
-        </ButtonSm>
+      <header className="bg-white border-b border-[#e5e7eb] px-6 py-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="text-[#6b7280] hover:text-[#1f2937] transition-colors"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <h1 className="text-sm font-medium text-[#1f2937]">Course Tiers</h1>
+          </div>
+          <button
+            type="button"
+            onClick={openCreateModal}
+            className="inline-flex items-center gap-2 rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
+          >
+            <Layers size={16} /> Create New Tier
+          </button>
+        </div>
       </header>
-      <div className="divider min-w-full border border-[#F1F1F1]" />
+
       {/* Content */}
-      <section className="p-4">
-        {isLoading && <p>Loading tiers...</p>}
+      <section className="p-6">
+        {isLoading && (
+          <div className="text-center py-12">
+            <div className="text-sm text-[#6b7280]">Loading tiers...</div>
+          </div>
+        )}
 
         {!isLoading && tiers.length === 0 && (
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 py-20 text-center">
-            <Layers size={42} className="mb-4 text-slate-400" />
-            <h3 className="text-lg font-semibold text-slate-800">
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[#e5e7eb] bg-white py-20 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#f3f4f6] mb-4">
+              <Layers size={32} className="text-[#9ca3af]" />
+            </div>
+            <h3 className="text-base font-semibold text-[#1f2937] mb-1">
               No tiers found
             </h3>
-            <p className="mt-1 max-w-sm text-sm text-slate-500">
-              This course doesn’t have any tiers yet. Create one to organize
+            <p className="mt-1 max-w-sm text-sm text-[#6b7280] mb-4">
+              This course doesn't have any tiers yet. Create one to organize
               your content.
             </p>
+            <button
+              type="button"
+              onClick={openCreateModal}
+              className="inline-flex items-center gap-2 rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
+            >
+              <Layers size={16} /> Create New Tier
+            </button>
           </div>
         )}
 
         {!isLoading && tiers.length > 0 && (
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {tiers.map((tier) => (
               <article
                 key={tier.id}
-                className="group relative rounded-2xl border border-slate-200 bg-white p-5 transition-all duration-300 hover:border-slate-300"
+                className="group relative rounded-lg border border-[#e5e7eb] bg-white p-5 transition-all hover:border-blue-600    shadow-sm hover:shadow-md"
               >
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     setActiveMenuId(activeMenuId === tier.id ? null : tier.id);
                   }}
-                  className="absolute cursor-pointer right-3 top-3 rounded-md p-1 text-slate-500 hover:bg-slate-100"
+                  className="absolute cursor-pointer right-3 top-3 rounded-md p-1.5 text-[#6b7280] hover:bg-[#f3f4f6] hover:text-[#1f2937] transition-colors"
                 >
                   <MoreVertical size={16} />
                 </button>
 
                 {renderMenu(tier)}
 
-                <span className="mb-2 inline-block rounded-md bg-indigo-50 px-2 py-1 text-xs font-semibold text-indigo-600">
-                  Tier {tier.tier_number}
-                </span>
+                <div className="mb-3">
+                  <span className="inline-block rounded-md bg-[#dbeafe] px-2.5 py-1 text-xs font-semibold text-[#1e40af]">
+                    Tier {tier.tier_number}
+                  </span>
+                </div>
 
-                <h3 className="text-lg font-semibold text-slate-900">
+                <h3 className="text-base font-semibold text-[#1f2937] mb-2">
                   {tier.tier_name}
                 </h3>
 
-                <p className="mt-1 line-clamp-2 text-sm text-slate-600">
+                <p className="line-clamp-2 text-sm text-[#6b7280] mb-4">
                   {tier.description || "No description provided"}
                 </p>
 
-                <div className="my-4 h-px bg-slate-100" />
-
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400">
-                    Manage tier content
-                  </span>
-                  <ButtonSm
-                    state="default"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/courses/${courseId}/tiers/${tier.id}`);
-                    }}
-                  >
-                    Add Content
-                  </ButtonSm>
+                <div className="border-t border-[#e5e7eb] pt-4 mt-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-[#9ca3af] uppercase tracking-wide">
+                      Content
+                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/course/${courseId}/tier/${tier.id}`);
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-md bg-[#f3f4f6] px-3 py-1.5 text-xs font-medium text-[#1f2937] hover:bg-[#e5e7eb] transition-colors"
+                    >
+                      Manage Content →
+                    </button>
+                  </div>
                 </div>
               </article>
             ))}
@@ -182,7 +207,7 @@ const TierManagement = () => {
         onConfirm={confirmDelete}
         onCancel={() => setTierToDelete(null)}
       />
-    </main>
+    </div>
   );
 };
 

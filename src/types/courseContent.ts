@@ -1,42 +1,51 @@
-export type VideoContentItem = {
+export interface Quiz {
   id: string;
-  module_type: "video";
+  question: string;
+  choices: string[];
+  answer: string[];
+  isMultiChoice: boolean;
+}
+
+export interface VideoContent {
+  id: string;
   title: string;
   description: string;
   video_url: string;
   thumbnail_url: string;
   duration: number;
   created_at: string;
-  position: number;
-};
+}
 
-export type TestContentItem = {
+export interface TestContent {
   id: string;
-  module_type: "test";
   title: string;
   test_duration: number;
-  quizzes: {
-    id: string;
-    question: string;
-    choices: any;
-    answer: any;
-    isMultiChoice: boolean;
-  }[];
-  position: number;
-};
+  quiz_count: number;
+  quizzes: Quiz[];
+}
 
-export type CourseContentsTree = {
-  [tierName: string]: {
-    [weekKey: string]: {
-      [dayKey: string]: CourseContentItem[];
+export type TierContentItem =
+  | {
+      id: string;
+      module_type: "video";
+      position: number;
+      video: VideoContent;
+    }
+  | {
+      id: string;
+      module_type: "test";
+      position: number;
+      test: TestContent;
     };
+
+export interface TierWeeks {
+  [week: string]: {
+    [day: string]: TierContentItem[];
   };
-};
+}
 
-export type CourseContentsResponse = {
-  courseId: string;
+export interface TierContentsResponse {
+  tierId: string;
   total: number;
-  contents: CourseContentsTree;
-};
-
-export type CourseContentItem = VideoContentItem | TestContentItem;
+  weeks: TierWeeks;
+}

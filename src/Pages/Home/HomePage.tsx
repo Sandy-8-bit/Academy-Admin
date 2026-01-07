@@ -223,7 +223,7 @@ export default function AdminDashboard() {
                 {mainActions.map((action, index) => (
                   <button
                     key={index}
-                    className="flex items-start p-4 border border-gray-200 rounded-lg hover:border-blue-900 hover:bg-blue-50 transition-all text-left group"
+                    className="flex items-start p-4 border border-gray-200 rounded-lg hover:border-blue-600hover:bg-blue-50 transition-all text-left group"
                   >
                     <action.icon className="w-5 h-5 text-gray-600 group-hover:text-blue-900 mr-3 mt-0.5" />
                     <div className="flex-1">

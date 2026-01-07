@@ -4,6 +4,7 @@ import MainLayout from "./components/Layout/mainLayout/MainLayout";
 import { appRoutes } from "./routes/appRoutes";
 import { Spinner } from "./components/common/Buttons";
 import TierManagement from "./pages/courseManagement/tier/TierManagement";
+import { ContentManagement } from "./pages/courseManagement/content/ContentManagement";
 
 // 🔹 Lazy-loaded pages
 const SignInPage = lazy(() => import("./pages/auth/Auth"));
@@ -30,6 +31,10 @@ function App() {
           <Route
             path={appRoutes.course.children.courseTiers}
             element={<TierManagement />}
+          />
+          <Route
+            path={appRoutes.course.children.courseContent}
+            element={<ContentManagement />}
           />
         </Route>
       </Routes>

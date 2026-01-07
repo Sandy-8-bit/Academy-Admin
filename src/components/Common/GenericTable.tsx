@@ -402,7 +402,7 @@ export default function GenericTable({
           <div className="flex items-center gap-3">
             {newItemLink && (
               <ButtonSm
-                className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-all shadow-md"
+                className="px-4 py-2 rounded-lg bg-blue-600  text-white hover:bg-blue-700 transition-all shadow-md"
                 state="default"
                 text="New"
                 onClick={() => nav(newItemLink)}

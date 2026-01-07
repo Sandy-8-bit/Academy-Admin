@@ -282,6 +282,8 @@ const CourseFormModal = ({
             <Input
               title="Description"
               placeholder="Enter Description"
+              maxLength={500}
+              type="str"
               inputValue={form.description}
               onChange={(v) => setForm((f) => ({ ...f, description: v }))}
             />

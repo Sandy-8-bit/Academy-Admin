@@ -6,6 +6,7 @@ export const appRoutes = {
     children: {
       courseTiers: "/course/:id",
       courseDetails: "/course/:courseId",
+      courseContent: "/course/:courseId/tier/:tierId",
     },
   },
 };

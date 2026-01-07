@@ -12,7 +12,6 @@ import { useFetchCourses, useDeleteCourse } from "../../../queries/courseQuery";
 import type { CourseResponse } from "@/types/courseTypes";
 import CourseFormModal from "./CourseFormModal";
 import ConfirmDeletePopup from "@components/common/ConfirmDeletePopup";
-import ButtonSm from "@/components/common/Button";
 
 const CourseManagement = () => {
   const navigate = useNavigate();
@@ -87,28 +86,28 @@ const CourseManagement = () => {
   const renderMenu = (course: CourseResponse) => {
     if (activeMenuId !== course.id) return null;
     return (
-      <div className="absolute right-3 overflow-clip top-13 z-20 w-48 rounded-sm border border-slate-100 bg-white shadow-2xl">
+      <div className="absolute right-3 top-12 z-20 w-48 rounded-md border border-[#e5e7eb] bg-white shadow-md overflow-hidden">
         <button
           type="button"
-          className="flex cursor-pointer w-full items-center gap-3 px-4 py-3 text-left text-sm font-medium text-gray-600 transition hover:bg-slate-50"
+          className="flex cursor-pointer w-full text-[#6b7280] font-medium items-center gap-3 px-4 py-2.5 text-left text-sm  transition hover:bg-[#f3f4f6]"
           onClick={(event) => {
             event.stopPropagation();
             handleEdit(course);
           }}
         >
-          <Edit3 className="h-3.5 w-3.5 text-gray-600" />
+          <Edit3 className="h-4 w-4 text-[#6b7280]" />
           Edit course
         </button>
         <button
           type="button"
-          className="flex w-full cursor-pointer items-center gap-3 px-4 py-3 text-left text-sm font-medium text-gray-600 transition hover:bg-red-50"
+          className="flex w-full cursor-pointer text-[#6b7280] font-medium items-center gap-3 px-4 py-2.5 text-left text-sm  transition hover:bg-red-50"
           onClick={(event) => {
             event.stopPropagation();
             handleDelete(course);
           }}
           disabled={isDeleting && pendingDeleteId === course.id}
         >
-          <Trash2 className="h-3.5 w-3.5 text-gray-600" />
+          <Trash2 className="h-4 w-4 text-[#6b7280]" />
           {isDeleting && pendingDeleteId === course.id
             ? "Deleting..."
             : "Delete"}
@@ -136,11 +135,11 @@ const CourseManagement = () => {
             handleCardClick();
           }
         }}
-        className="group relative cursor-pointer rounded-xl border border-slate-200 bg-white"
+        className="group relative cursor-pointer rounded-lg border border-[#e5e7eb] bg-white hover:border-blue-600    transition-all shadow-sm hover:shadow-md"
       >
         <button
           type="button"
-          className="absolute cursor-pointer right-3 top-3 z-30 rounded-full border border-white/40 bg-white/80 p-2 text-slate-700  transition hover:bg-white"
+          className="absolute cursor-pointer right-3 top-3 z-30 rounded-md border border-[#e5e7eb] bg-white p-1.5 text-[#6b7280] transition hover:bg-[#f3f4f6] hover:text-[#1f2937]"
           onClick={(event) => {
             event.stopPropagation();
             setActiveMenuId((prev) => (prev === course.id ? null : course.id));
@@ -149,12 +148,8 @@ const CourseManagement = () => {
           <MoreVertical className="h-4 w-4" />
         </button>
         {renderMenu(course)}
-        <span className="flex bg-white rounded-lg px-3 py-1.5 flex-row text-sm w-max absolute cursor-pointer right-3 top-3 left-3 z-30 items-center gap-1.5 font-medium  text-slate-700">
-          <Clock3 className="h-4 w-4 text-slate-700" />
-          {course.total_hours} hrs
-        </span>
 
-        <div className="relative h-44 w-full overflow-hidden rounded-t-xl bg-slate-100">
+        <div className="relative h-48 w-full overflow-hidden rounded-t-lg bg-[#f3f4f6]">
           {hasThumbnail ? (
             <img
               src={course.thumbnail_url}
@@ -166,35 +161,36 @@ const CourseManagement = () => {
               }}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-slate-200 text-slate-500">
-              No Image
+            <div className="flex h-full w-full items-center justify-center bg-[#f3f4f6] text-[#9ca3af]">
+              <BookOpen className="h-12 w-12" />
             </div>
           )}
 
-          {hasThumbnail && (
-            <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
-          )}
-
-          <div className="absolute bottom-3 left-4 right-4 flex flex-col text-white">
-            <p className="text-xs uppercase tracking-widest text-white/80">
-              Published {formatDate(course.created_at)}
-            </p>
-            <h3 className="text-lg font-semibold leading-tight">
-              {course.course_name}
-            </h3>
+          <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-md bg-white/95 backdrop-blur-sm px-2.5 py-1 text-xs font-medium text-[#1f2937] shadow-sm">
+            <Clock3 className="h-3.5 w-3.5 text-[#6b7280]" />
+            {course.total_hours} hrs
           </div>
         </div>
 
-        <div className="space-y-4 p-4">
-          <p className="text-sm text-slate-600 line-clamp-2 text-ellipsis">
+        <div className="p-4 space-y-3">
+          <div>
+            <h3 className="text-base font-semibold text-[#1f2937] mb-1 line-clamp-1">
+              {course.course_name}
+            </h3>
+            <p className="text-xs text-[#6b7280]">
+              Published {formatDate(course.created_at)}
+            </p>
+          </div>
+
+          <p className="text-sm text-[#6b7280] line-clamp-2">
             {course.description || "No description provided."}
           </p>
 
-          <div className="flex flex-wrap items-center gap-3 w-full justify-between text-sm text-slate-500">
-            <span className="inline-flex items-center gap-1.5 text-xl font-medium py-1 text-gray-900">
-              ₹ {priceLabel}
+          <div className="flex items-center justify-between pt-2 border-t border-[#e5e7eb]">
+            <span className="text-lg font-semibold text-[#1f2937]">
+              ₹{priceLabel}
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-md font-medium border border-emerald-100 bg-emerald-50/70 px-3 py-1 text-emerald-700">
+            <span className="inline-flex items-center gap-1 rounded-md bg-[#ecfdf5] px-2.5 py-1 text-xs font-medium text-[#059669]">
               Updated {formatDate(course.updated_at)}
             </span>
           </div>
@@ -208,16 +204,17 @@ const CourseManagement = () => {
       {[...Array(3)].map((_, index) => (
         <div
           key={`skeleton-${index}`}
-          className="animate-pulse rounded-3xl border border-slate-200 bg-white"
+          className="animate-pulse rounded-lg border border-[#e5e7eb] bg-white overflow-hidden"
         >
-          <div className="h-56 w-full bg-slate-200" />
-          <div className="space-y-4 p-5">
-            <div className="h-6 w-3/4 rounded bg-slate-200" />
-            <div className="h-4 w-full rounded bg-slate-100" />
-            <div className="h-4 w-5/6 rounded bg-slate-100" />
-            <div className="flex gap-3">
-              <div className="h-8 w-24 rounded-full bg-slate-100" />
-              <div className="h-8 w-20 rounded-full bg-slate-100" />
+          <div className="h-48 w-full bg-[#f3f4f6]" />
+          <div className="p-4 space-y-3">
+            <div className="h-5 w-3/4 rounded bg-[#f3f4f6]" />
+            <div className="h-3 w-1/2 rounded bg-[#f3f4f6]" />
+            <div className="h-4 w-full rounded bg-[#f3f4f6]" />
+            <div className="h-4 w-5/6 rounded bg-[#f3f4f6]" />
+            <div className="flex justify-between pt-2">
+              <div className="h-6 w-20 rounded bg-[#f3f4f6]" />
+              <div className="h-6 w-24 rounded bg-[#f3f4f6]" />
             </div>
           </div>
         </div>
@@ -226,35 +223,40 @@ const CourseManagement = () => {
   );
 
   return (
-    <main className="layout-container m-4 flex min-h-[95vh] flex-col rounded-[12px] border-2 border-[#F1F1F1] bg-white">
-      <header className="flex flex-row items-center justify-between gap-4 p-4">
-        <h1 className="flex w-max flex-row items-center gap-2 text-start text-xl font-semibold text-zinc-800">
-          <ArrowLeft
-            onClick={() => navigate(-1)}
-            size={24}
-            className="cursor-pointer transition hover:scale-105 active:scale-110"
-          />
-          Course Library
-        </h1>
-        <ButtonSm
-          state="default"
-          type="button"
-          onClick={openCreateModal}
-          // className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-black"
-        >
-          <BookOpen className="h-4 w-4" />
-          New course
-        </ButtonSm>
+    <div className="min-h-screen bg-[#f8f9fa]">
+      {/* Header */}
+      <header className="bg-white border-b border-[#e5e7eb] px-6 py-4">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="text-[#6b7280] hover:text-[#1f2937] transition-colors"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <h1 className="text-sm font-medium text-[#1f2937]">
+              Course Library
+            </h1>
+          </div>
+          <button
+            type="button"
+            onClick={openCreateModal}
+            className="inline-flex items-center gap-2 rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
+          >
+            <BookOpen className="h-4 w-4" />
+            New course
+          </button>
+        </div>
       </header>
-      <div className="divider min-w-full border border-[#F1F1F1]" />
 
-      <section className="flex-1 overflow-auto p-4 md:p-6">
+      {/* Main Content */}
+      <section className="p-6">
         {isError ? (
-          <div className="rounded-3xl border border-red-100 bg-red-50 p-6 text-red-700">
-            Unable to load courses.{" "}
+          <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-red-800">
+            <p className="font-medium">Unable to load courses.</p>
             <button
               type="button"
-              className="font-semibold underline"
+              className="mt-2 text-sm font-semibold underline hover:no-underline"
               onClick={() => refetch()}
             >
               Try again
@@ -264,18 +266,21 @@ const CourseManagement = () => {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {isLoading && renderSkeletons()}
             {!isLoading && courses.length === 0 && (
-              <div className="col-span-full rounded-3xl border border-dashed border-slate-200 bg-white p-10 text-center">
-                <p className="text-lg font-semibold text-slate-800">
+              <div className="col-span-full rounded-lg border border-dashed border-[#e5e7eb] bg-white p-12 text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#f3f4f6] mb-4">
+                  <BookOpen className="h-8 w-8 text-[#9ca3af]" />
+                </div>
+                <p className="text-base font-semibold text-[#1f2937] mb-1">
                   No courses yet
                 </p>
-                <p className="mt-2 text-sm text-slate-500">
+                <p className="text-sm text-[#6b7280] mb-4">
                   Start by creating your first course to populate this
                   dashboard.
                 </p>
                 <button
                   type="button"
                   onClick={openCreateModal}
-                  className="mt-4 inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-semibold text-white hover:bg-black"
+                  className="inline-flex items-center gap-2 rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
                 >
                   <BookOpen className="h-4 w-4" />
                   Create a course
@@ -308,7 +313,7 @@ const CourseManagement = () => {
           onCancel={() => setCourseToDelete(null)}
         />
       </section>
-    </main>
+    </div>
   );
 };
 
