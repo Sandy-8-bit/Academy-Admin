@@ -10,4 +10,6 @@ export const apiRoutes = {
   tierById: "/api/v1/tiers", // PUT, DELETE
   // CONTENT
   contentById: "/api/v1/courses/tiers", // PUT, DELETE
+  // MEDIA
+  mediaVideoUploadUrl: "/api/v1/media/videos/upload-url",
 };

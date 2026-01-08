@@ -2,10 +2,9 @@ import axiosInstance from "../utils/axios";
 import toast from "react-hot-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRoutes } from "../routes/apiRoutes";
-import type { CourseResponse, CourseRequest } from "../types/courseTypes";
+import type { CourseResponse } from "../types/courseTypes";
 import { authHandler } from "@/utils/authHandler";
 import { handleApiError } from "@/utils/handleApiError";
-import type { CourseContentsResponse } from "@/types/courseContent";
 
 /* -------------------- GET ALL COURSES -------------------- */
 export const useFetchCourses = () => {
@@ -34,9 +33,7 @@ export const useFetchCourses = () => {
 export const useCreateCourse = () => {
   const queryClient = useQueryClient();
 
-  const createCourse = async (
-    payload: CourseRequest
-  ): Promise<CourseResponse> => {
+  const createCourse = async (payload: FormData): Promise<CourseResponse> => {
     const token = authHandler();
     try {
       const res = await axiosInstance.post<CourseResponse>(
@@ -72,11 +69,11 @@ export const useUpdateCourse = () => {
     payload,
   }: {
     courseId: string;
-    payload: CourseRequest;
+    payload: FormData;
   }): Promise<CourseResponse> => {
     const token = authHandler();
     try {
-      const res = await axiosInstance.put<CourseResponse>(
+      const res = await axiosInstance.patch<CourseResponse>(
         `${apiRoutes.course}/${courseId}`,
         payload,
         {
@@ -132,30 +129,5 @@ export const useDeleteCourse = () => {
       toast.success("Course deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["courses"] });
     },
-  });
-};
-
-/* -------------------- GET COURSE BY ID -------------------- */
-export const useFetchCourseById = (courseId: string) => {
-  const fetchCourseById = async (): Promise<CourseContentsResponse> => {
-    const token = authHandler();
-
-    const res = await axiosInstance.get<CourseContentsResponse>(
-      `${apiRoutes.course}/${courseId}/contents`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    return res.data;
-  };
-
-  return useQuery({
-    queryKey: ["course-contents", courseId],
-    queryFn: fetchCourseById,
-    retry: 1,
-    enabled: !!courseId,
   });
 };

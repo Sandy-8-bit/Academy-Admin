@@ -1,10 +1,12 @@
-import { useEffect, useState, useCallback } from "react";
-import { X, ImagePlus, Trash2 } from "lucide-react";
-import Cropper from "react-easy-crop";
+import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 import Input from "../../../components/common/Input";
 import { useCreateCourse, useUpdateCourse } from "@/queries/courseQuery";
 import type { CourseResponse } from "@/types/courseTypes";
 import ButtonSm from "@/components/common/Button";
+import ImageUploader, {
+  type ImageUploaderValue,
+} from "@/components/common/ImageUploader";
 
 /* -------------------------------------------------------------------------- */
 /*                                    TYPES                                   */
@@ -26,61 +28,14 @@ type CourseFormState = {
   description: string;
 };
 
-type ImageState = {
-  rawFile: File | null;
-  finalFile: File | null;
-  preview: string | null;
-  showCropper: boolean;
-  crop: { x: number; y: number };
-  zoom: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  croppedPixels: any;
+const emptyFormState: CourseFormState = {
+  courseName: "",
+  totalHours: "",
+  price: "",
+  description: "",
 };
 
-/* -------------------------------------------------------------------------- */
-/*                                   HELPERS                                  */
-/* -------------------------------------------------------------------------- */
-
-const createImage = (url: string): Promise<HTMLImageElement> =>
-  new Promise((resolve, reject) => {
-    const image = new Image();
-    image.crossOrigin = "anonymous";
-    image.onload = () => resolve(image);
-    image.onerror = reject;
-    image.src = url;
-  });
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const getCroppedImage = async (src: string, crop: any): Promise<File> => {
-  const image = await createImage(src);
-  const canvas = document.createElement("canvas");
-  const ctx = canvas.getContext("2d")!;
-
-  canvas.width = crop.width;
-  canvas.height = crop.height;
-
-  ctx.drawImage(
-    image,
-    crop.x,
-    crop.y,
-    crop.width,
-    crop.height,
-    0,
-    0,
-    crop.width,
-    crop.height
-  );
-
-  return new Promise((resolve) => {
-    canvas.toBlob((blob) => {
-      resolve(
-        new File([blob!], "thumbnail.jpg", {
-          type: "image/jpeg",
-        })
-      );
-    }, "image/jpeg");
-  });
-};
+const getEmptyFormState = (): CourseFormState => ({ ...emptyFormState });
 
 /* -------------------------------------------------------------------------- */
 /*                                COMPONENT                                   */
@@ -95,139 +50,135 @@ const CourseFormModal = ({
   const isEdit = mode === "edit";
 
   /* ------------------------------ FORM STATE ------------------------------ */
-  const [form, setForm] = useState<CourseFormState>({
-    courseName: "",
-    totalHours: "",
-    price: "",
-    description: "",
-  });
-
-  const [image, setImage] = useState<ImageState>({
-    rawFile: null,
-    finalFile: null,
-    preview: null,
-    showCropper: false,
-    crop: { x: 0, y: 0 },
-    zoom: 1,
-    croppedPixels: null,
-  });
+  const [form, setForm] = useState<CourseFormState>(getEmptyFormState);
+  const [initialFormSnapshot, setInitialFormSnapshot] =
+    useState<CourseFormState>(getEmptyFormState);
+  const [thumbnailInitialPreview, setThumbnailInitialPreview] = useState<
+    string | null
+  >(null);
+  const [imageResetSignal, setImageResetSignal] = useState(0);
+  const [uploadedThumbnail, setUploadedThumbnail] = useState<File | null>(null);
+  const [imageChanged, setImageChanged] = useState(false);
+  const [removeThumbnail, setRemoveThumbnail] = useState(false);
 
   const { mutate: createCourse, isPending: creating } = useCreateCourse();
   const { mutate: updateCourse, isPending: updating } = useUpdateCourse();
 
   /* ------------------------------ RESET LOGIC ------------------------------ */
+
   useEffect(() => {
     if (!open) return;
 
     if (mode === "create") {
+      const base = getEmptyFormState();
       // eslint-disable-next-line react-hooks/set-state-in-effect
-      setForm({
-        courseName: "",
-        totalHours: "",
-        price: "",
-        description: "",
-      });
-
-      if (image.preview) URL.revokeObjectURL(image.preview);
-
-      setImage({
-        rawFile: null,
-        finalFile: null,
-        preview: null,
-        showCropper: false,
-        crop: { x: 0, y: 0 },
-        zoom: 1,
-        croppedPixels: null,
-      });
+      setForm(base);
+      setInitialFormSnapshot(base);
+      setThumbnailInitialPreview(null);
+      setUploadedThumbnail(null);
+      setImageChanged(false);
+      setRemoveThumbnail(false);
+      setImageResetSignal((prev) => prev + 1);
+      return;
     }
 
     if (mode === "edit" && course) {
-      setForm({
-        courseName: course.course_name,
+      const hydrated: CourseFormState = {
+        courseName: course.course_name ?? "",
         totalHours: course.total_hours,
         price: Number(course.price),
         description: course.description ?? "",
-      });
+      };
 
-      setImage((prev) => ({
-        ...prev,
-        preview: course.thumbnail_url || null,
-      }));
+      setForm(hydrated);
+      setInitialFormSnapshot(hydrated);
+      setThumbnailInitialPreview(course.thumbnail_url || null);
+      setUploadedThumbnail(null);
+      setImageChanged(false);
+      setRemoveThumbnail(false);
+      setImageResetSignal((prev) => prev + 1);
     }
   }, [open, mode, course]);
 
-  /* ------------------------------ IMAGE HANDLERS ------------------------------ */
-  const handleFile = (file?: File) => {
-    if (!file) return;
-
-    if (image.preview) URL.revokeObjectURL(image.preview);
-
-    const previewUrl = URL.createObjectURL(file);
-
-    setImage((prev) => ({
-      ...prev,
-      rawFile: file,
-      finalFile: file,
-      preview: previewUrl,
-      showCropper: true,
-    }));
+  const handleThumbnailChange = (value: ImageUploaderValue) => {
+    if (value instanceof File) {
+      setUploadedThumbnail(value);
+      setImageChanged(true);
+      setRemoveThumbnail(false);
+    } else if (value === null) {
+      setUploadedThumbnail(null);
+      setImageChanged(false);
+    }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onCropComplete = useCallback((_: any, pixels: any) => {
-    setImage((prev) => ({ ...prev, croppedPixels: pixels }));
-  }, []);
-
-  const applyCrop = async () => {
-    if (!image.preview || !image.croppedPixels) return;
-
-    const cropped = await getCroppedImage(image.preview, image.croppedPixels);
-
-    URL.revokeObjectURL(image.preview);
-
-    setImage((prev) => ({
-      ...prev,
-      finalFile: cropped,
-      preview: URL.createObjectURL(cropped),
-      showCropper: false,
-    }));
-  };
-
-  const removeImage = () => {
-    if (image.preview) URL.revokeObjectURL(image.preview);
-
-    setImage((prev) => ({
-      ...prev,
-      rawFile: null,
-      finalFile: null,
-      preview: null,
-    }));
+  const handleThumbnailRemove = () => {
+    if (isEdit) {
+      setRemoveThumbnail(true);
+    }
   };
 
   /* ------------------------------ SUBMIT ------------------------------ */
   const handleSubmit = () => {
     if (!form.courseName || !form.totalHours || !form.price) return;
 
-    const formData = new FormData();
-    formData.append("course_name", form.courseName);
-    formData.append("total_hours", String(form.totalHours));
-    formData.append("price", String(form.price));
-    formData.append("description", form.description);
-
-    if (image.finalFile) {
-      formData.append("file", image.finalFile);
-    }
+    const trimmedName = form.courseName.trim();
+    const trimmedDescription = form.description.trim();
 
     if (isEdit && course) {
-      updateCourse(
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        { courseId: course.id, payload: formData as any },
-        { onSuccess: onClose }
-      );
-    } else {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      createCourse(formData as any, { onSuccess: onClose });
+      const payload = new FormData();
+      let hasChanges = false;
+
+      if (trimmedName !== initialFormSnapshot.courseName) {
+        payload.append("course_name", trimmedName);
+        hasChanges = true;
+      }
+
+      if (form.totalHours !== initialFormSnapshot.totalHours) {
+        payload.append("total_hours", String(form.totalHours));
+        hasChanges = true;
+      }
+
+      if (form.price !== initialFormSnapshot.price) {
+        payload.append("price", String(form.price));
+        hasChanges = true;
+      }
+
+      if (trimmedDescription !== initialFormSnapshot.description) {
+        payload.append("description", trimmedDescription);
+        hasChanges = true;
+      }
+
+      if (imageChanged && uploadedThumbnail) {
+        payload.append("file", uploadedThumbnail);
+        hasChanges = true;
+      }
+
+      if (removeThumbnail) {
+        payload.append("remove_thumbnail", "true");
+        hasChanges = true;
+      }
+
+      if (!hasChanges) {
+        onClose();
+        return;
+      }
+
+      updateCourse({ courseId: course.id, payload }, { onSuccess: onClose });
+
+      return;
     }
+
+    const payload = new FormData();
+    payload.append("course_name", trimmedName);
+    payload.append("total_hours", String(form.totalHours));
+    payload.append("price", String(form.price));
+    payload.append("description", trimmedDescription);
+
+    if (uploadedThumbnail) {
+      payload.append("file", uploadedThumbnail);
+    }
+
+    createCourse(payload, { onSuccess: onClose });
   };
 
   if (!open) return null;
@@ -288,34 +239,12 @@ const CourseFormModal = ({
               onChange={(v) => setForm((f) => ({ ...f, description: v }))}
             />
 
-            {/* Image Upload */}
-            <div className="relative flex h-40 items-center justify-center rounded-xl border-2 border-dashed">
-              {image.preview ? (
-                <div className="relative h-full w-full">
-                  <img
-                    src={image.preview}
-                    className="h-full w-full rounded-xl object-cover"
-                  />
-                  <button
-                    onClick={removeImage}
-                    className="absolute right-2 top-2 bg-white p-2 rounded-full"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              ) : (
-                <label className="flex flex-col items-center gap-2 cursor-pointer">
-                  <ImagePlus />
-                  <span>Upload thumbnail</span>
-                  <input
-                    hidden
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => handleFile(e.target.files?.[0])}
-                  />
-                </label>
-              )}
-            </div>
+            <ImageUploader
+              initialPreview={thumbnailInitialPreview}
+              resetSignal={imageResetSignal}
+              onChange={handleThumbnailChange}
+              onRemove={handleThumbnailRemove}
+            />
           </div>
 
           {/* Footer */}
@@ -337,52 +266,6 @@ const CourseFormModal = ({
           </div>
         </div>
       </div>
-
-      {/* Cropper */}
-      {image.showCropper && image.preview && (
-        <div className="fixed inset-0 z-60 bg-black/80 flex items-center justify-center">
-          <div className="bg-white p-4 rounded-xl w-[90vw] max-w-md">
-            <div className="relative h-72">
-              <Cropper
-                image={image.preview}
-                crop={image.crop}
-                zoom={image.zoom}
-                aspect={16 / 9}
-                onCropChange={(c) => setImage((prev) => ({ ...prev, crop: c }))}
-                onZoomChange={(z) => setImage((prev) => ({ ...prev, zoom: z }))}
-                onCropComplete={onCropComplete}
-              />
-            </div>
-
-            <input
-              type="range"
-              min={1}
-              max={3}
-              step={0.1}
-              value={image.zoom}
-              onChange={(e) =>
-                setImage((prev) => ({
-                  ...prev,
-                  zoom: Number(e.target.value),
-                }))
-              }
-              className="mt-4 w-full"
-            />
-
-            <div className="mt-4 flex justify-end gap-3">
-              <ButtonSm
-                state="outline"
-                onClick={() => setImage((p) => ({ ...p, showCropper: false }))}
-              >
-                Cancel
-              </ButtonSm>
-              <ButtonSm state="default" onClick={applyCrop}>
-                Apply
-              </ButtonSm>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };

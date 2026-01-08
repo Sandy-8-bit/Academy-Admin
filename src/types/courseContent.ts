@@ -49,3 +49,38 @@ export interface TierContentsResponse {
   total: number;
   weeks: TierWeeks;
 }
+
+export interface BaseModuleRequest {
+  week: number;
+  day: number;
+  position: number;
+}
+
+export interface VideoModuleRequest extends BaseModuleRequest {
+  module_type: "video";
+  video: {
+    title: string;
+    description: string;
+    video_url: string;
+    thumbnail_url: string;
+    duration: number;
+  };
+}
+
+export interface QuizRequest {
+  question: string;
+  choices: string[];
+  answer: string[];
+  isMultiChoice: boolean;
+}
+
+export interface TestModuleRequest extends BaseModuleRequest {
+  module_type: "test";
+  test: {
+    title: string;
+    test_duration: number;
+    quizzes: QuizRequest[];
+  };
+}
+
+export type CreateTierContentPayload = VideoModuleRequest | TestModuleRequest;

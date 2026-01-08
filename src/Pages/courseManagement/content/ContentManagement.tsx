@@ -1,16 +1,13 @@
 import ButtonSm from "@/components/common/Button";
+import DialogBox from "@/components/common/DialogBox";
 import { useFetchTierContents } from "@/queries/contentQuery";
 import { useContentStore } from "@/store/contentStore";
 import type { TierContentItem } from "@/types/courseContent";
-import {
-  ArrowLeft,
-  DotIcon,
-  Menu,
-  MoreVerticalIcon,
-  TableOfContentsIcon,
-} from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { AnimatePresence } from "framer-motion";
+import { ArrowLeft, MoreVerticalIcon, TableOfContentsIcon } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import AddVideoDrawer from "./AddVideoDrawer";
 
 export const ContentManagement = () => {
   const { tierId } = useParams<{
@@ -19,7 +16,7 @@ export const ContentManagement = () => {
   }>();
 
   const { data, isLoading, isError } = useFetchTierContents(tierId);
-
+  const [isAddVideoOpen, setIsAddVideoOpen] = useState(false);
   const weeks = useContentStore((state) => state.weeks);
   const selectedWeek = useContentStore((state) => state.selectedWeek);
   const selectedDay = useContentStore((state) => state.selectedDay);
@@ -115,7 +112,7 @@ export const ContentManagement = () => {
               <button
                 key={week}
                 onClick={() => selectWeek(week)}
-                className={`w-full flex overflow-clip relative items-center gap-3 text-left px-4 py-2 text-sm transition-colors ${
+                className={`w-full flex overflow-clip cursor-pointer  relative items-center gap-3 text-left px-4 py-2 text-sm transition-colors ${
                   week === selectedWeek
                     ? "bg-gray-100 text-black font-medium"
                     : "text-[#1f2937] hover:bg-[#f3f4f6]"
@@ -123,7 +120,7 @@ export const ContentManagement = () => {
               >
                 <div
                   className={`h-16 absolute top-0 left-0 w-1  transition-colors ${
-                    week === selectedWeek ? "bg-gray-800" : "bg-[#d1d3d9]"
+                    week === selectedWeek && "bg-gray-800"
                   }`}
                 />
                 <span className="flex-1">{week}</span>
@@ -154,7 +151,7 @@ export const ContentManagement = () => {
               <button
                 key={day}
                 onClick={() => selectDay(day)}
-                className={`w-full flex items-center overflow-clip relative gap-3 text-left px-4 py-2 text-sm transition-colors ${
+                className={`w-full flex items-center cursor-pointer overflow-clip relative gap-3 text-left px-4 py-2 text-sm transition-colors ${
                   day === selectedDay
                     ? "bg-gray-100 text-black font-medium"
                     : "text-[#1f2937] hover:bg-[#f3f4f6]"
@@ -162,7 +159,7 @@ export const ContentManagement = () => {
               >
                 <div
                   className={`h-16 w-1 absolute top-0 left-0  transition-colors ${
-                    day === selectedDay ? "bg-gray-800" : "bg-[#d1d3d9]"
+                    day === selectedDay && "bg-gray-800"
                   }`}
                 />
                 <span className="flex-1">{day}</span>
@@ -183,18 +180,53 @@ export const ContentManagement = () => {
 
         {/* Main Content Area */}
         <div className="flex-1 overflow-y-auto bg-[#f8f9fa]">
+          {/* drawer items */}
+          <AnimatePresence mode="wait">
+            {isAddVideoOpen && (
+              <DialogBox
+                setToggleDialogueBox={setIsAddVideoOpen}
+                isSideDrawer={true}
+                width="800px"
+              >
+                <AddVideoDrawer
+                  tierId={tierId}
+                  weekLabel={selectedWeek}
+                  dayLabel={selectedDay}
+                  contentsCount={contents.length}
+                  onClose={() => setIsAddVideoOpen(false)}
+                />
+              </DialogBox>
+            )}
+          </AnimatePresence>
           <div className="px-6 py-3 border-b border-[#d1d3d9] bg-white">
             <h2 className="text-xs font-semibold text-[#6b7280] uppercase tracking-wider">
               Contents
             </h2>
           </div>
 
-          <div className="p-6">
+          <div className="p-6 flex flex-col gap-6">
             {contents.length === 0 && (
               <div className="text-center py-12">
                 <p className="text-[#6b7280] text-sm">No content available</p>
               </div>
             )}
+            <div className="action-buttons flex flex-row gap-2 items-center">
+              <ButtonSm
+                onClick={() => setIsAddVideoOpen(true)}
+                type="button"
+                state="default"
+                disabled={!selectedWeek || !selectedDay || !tierId}
+              >
+                + Add New Video
+              </ButtonSm>
+              <ButtonSm
+                type="button"
+                state="default"
+                disabled={!selectedWeek || !selectedDay || !tierId}
+              >
+                + Add New Test
+              </ButtonSm>
+            </div>
 
             <div className="space-y-3">
               {contents.map((item) => {
