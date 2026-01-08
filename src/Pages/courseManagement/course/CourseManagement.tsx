@@ -8,6 +8,7 @@ import {
   MoreVertical,
   Trash2,
 } from "lucide-react";
+import ButtonSm from "@/components/common/Button";
 import { useFetchCourses, useDeleteCourse } from "../../../queries/courseQuery";
 import type { CourseResponse } from "@/types/courseTypes";
 import CourseFormModal from "./CourseFormModal";
@@ -86,10 +87,11 @@ const CourseManagement = () => {
   const renderMenu = (course: CourseResponse) => {
     if (activeMenuId !== course.id) return null;
     return (
-      <div className="absolute right-3 top-12 z-20 w-48 rounded-md border border-[#e5e7eb] bg-white shadow-md overflow-hidden">
-        <button
+      <div className="absolute right-3 top-12 z-20 w-48 rounded-md border border-[#d1d3d9]  bg-white shadow-md overflow-hidden">
+        <ButtonSm
           type="button"
-          className="flex cursor-pointer w-full text-[#6b7280] font-medium items-center gap-3 px-4 py-2.5 text-left text-sm  transition hover:bg-[#f3f4f6]"
+          state="outline"
+          className="!flex !w-full !justify-start !items-center !gap-3 !px-4 !py-2.5 !text-left text-sm font-medium !bg-white !border-none !shadow-none !text-[#6b7280] hover:!bg-[#f3f4f6]"
           onClick={(event) => {
             event.stopPropagation();
             handleEdit(course);
@@ -97,10 +99,11 @@ const CourseManagement = () => {
         >
           <Edit3 className="h-4 w-4 text-[#6b7280]" />
           Edit course
-        </button>
-        <button
+        </ButtonSm>
+        <ButtonSm
           type="button"
-          className="flex w-full cursor-pointer text-[#6b7280] font-medium items-center gap-3 px-4 py-2.5 text-left text-sm  transition hover:bg-red-50"
+          state="outline"
+          className="!flex !w-full !justify-start !items-center !gap-3 !px-4 !py-2.5 !text-left text-sm font-medium !bg-white !border-none !shadow-none !text-[#6b7280] hover:!bg-red-50"
           onClick={(event) => {
             event.stopPropagation();
             handleDelete(course);
@@ -111,7 +114,7 @@ const CourseManagement = () => {
           {isDeleting && pendingDeleteId === course.id
             ? "Deleting..."
             : "Delete"}
-        </button>
+        </ButtonSm>
       </div>
     );
   };
@@ -135,18 +138,19 @@ const CourseManagement = () => {
             handleCardClick();
           }
         }}
-        className="group relative cursor-pointer rounded-lg border border-[#e5e7eb] bg-white hover:border-blue-600    transition-all shadow-sm hover:shadow-md"
+        className="group relative cursor-pointer rounded-lg border border-[#d1d3d9]  bg-white hover:border-gray-300 transition-all "
       >
-        <button
+        <ButtonSm
           type="button"
-          className="absolute cursor-pointer right-3 top-3 z-30 rounded-md border border-[#e5e7eb] bg-white p-1.5 text-[#6b7280] transition hover:bg-[#f3f4f6] hover:text-[#1f2937]"
+          state="outline"
+          className="!absolute !right-3 !top-3 !z-30 !rounded-md !border !border-[#d1d3d9]  !bg-white !p-1.5 !gap-0 !text-[#6b7280] hover:!bg-[#f3f4f6] hover:!text-[#1f2937]"
           onClick={(event) => {
             event.stopPropagation();
             setActiveMenuId((prev) => (prev === course.id ? null : course.id));
           }}
         >
           <MoreVertical className="h-4 w-4" />
-        </button>
+        </ButtonSm>
         {renderMenu(course)}
 
         <div className="relative h-48 w-full overflow-hidden rounded-t-lg bg-[#f3f4f6]">
@@ -186,7 +190,7 @@ const CourseManagement = () => {
             {course.description || "No description provided."}
           </p>
 
-          <div className="flex items-center justify-between pt-2 border-t border-[#e5e7eb]">
+          <div className="flex items-center justify-between pt-2 border-t border-[#d1d3d9] ">
             <span className="text-lg font-semibold text-[#1f2937]">
               ₹{priceLabel}
             </span>
@@ -204,7 +208,7 @@ const CourseManagement = () => {
       {[...Array(3)].map((_, index) => (
         <div
           key={`skeleton-${index}`}
-          className="animate-pulse rounded-lg border border-[#e5e7eb] bg-white overflow-hidden"
+          className="animate-pulse rounded-lg border border-[#d1d3d9]  bg-white overflow-hidden"
         >
           <div className="h-48 w-full bg-[#f3f4f6]" />
           <div className="p-4 space-y-3">
@@ -225,48 +229,51 @@ const CourseManagement = () => {
   return (
     <div className="min-h-screen bg-[#f8f9fa]">
       {/* Header */}
-      <header className="bg-white border-b border-[#e5e7eb] px-6 py-4">
+      <header className="bg-white border-b border-[#d1d3d9] py-2 px-6">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <button
+            <ButtonSm
+              state="outline"
               onClick={() => navigate(-1)}
-              className="text-[#6b7280] hover:text-[#1f2937] transition-colors"
+              className="bg-transparent border-none !px-0 !py-0 "
             >
               <ArrowLeft size={20} />
-            </button>
-            <h1 className="text-sm font-medium text-[#1f2937]">
+            </ButtonSm>
+            <h1 className="text-md font-medium text-[#1f2937]">
               Course Library
             </h1>
           </div>
-          <button
+          <ButtonSm
             type="button"
+            state="default"
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
+            className="text-sm font-medium"
           >
             <BookOpen className="h-4 w-4" />
-            New course
-          </button>
+            Create New course
+          </ButtonSm>
         </div>
       </header>
 
       {/* Main Content */}
       <section className="p-6">
         {isError ? (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-6 text-red-800">
+          <div className="rounded-lg border flex flex-col gap-3 border-red-200 bg-red-50 p-6 text-red-800">
             <p className="font-medium">Unable to load courses.</p>
-            <button
+            <ButtonSm
               type="button"
-              className="mt-2 text-sm font-semibold underline hover:no-underline"
+              className="w-max"
+              state="danger"
               onClick={() => refetch()}
             >
               Try again
-            </button>
+            </ButtonSm>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
             {isLoading && renderSkeletons()}
             {!isLoading && courses.length === 0 && (
-              <div className="col-span-full rounded-lg border border-dashed border-[#e5e7eb] bg-white p-12 text-center">
+              <div className="col-span-full rounded-lg border border-dashed border-[#d1d3d9]  bg-white p-12 text-center">
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#f3f4f6] mb-4">
                   <BookOpen className="h-8 w-8 text-[#9ca3af]" />
                 </div>
@@ -277,14 +284,15 @@ const CourseManagement = () => {
                   Start by creating your first course to populate this
                   dashboard.
                 </p>
-                <button
+                <ButtonSm
                   type="button"
+                  state="default"
                   onClick={openCreateModal}
-                  className="inline-flex items-center gap-2 rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
+                  className="!inline-flex !items-center !gap-2 !rounded-md !bg-blue-900 !px-4 !py-2 text-sm font-medium !text-white hover:!bg-blue-600"
                 >
                   <BookOpen className="h-4 w-4" />
                   Create a course
-                </button>
+                </ButtonSm>
               </div>
             )}
             {!isLoading &&

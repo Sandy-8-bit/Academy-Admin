@@ -35,10 +35,7 @@ const MainLayout: React.FC = () => {
         {/* <TopNav userName={userName} formattedDate={formattedDate} /> */}
 
         {/* Content */}
-        <main
-          id="layout"
-          className="main-content flex-1 overflow-y-auto  pr-3 pb-24 md:pb-0  lg:pr-4"
-        >
+        <main id="layout" className="main-content flex-1 overflow-y-auto ">
           <Outlet />
         </main>
       </section>

@@ -1,37 +1,61 @@
+import ButtonSm from "@/components/common/Button";
 import { useFetchTierContents } from "@/queries/contentQuery";
-import { ArrowLeft } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useContentStore } from "@/store/contentStore";
+import type { TierContentItem } from "@/types/courseContent";
+import {
+  ArrowLeft,
+  DotIcon,
+  Menu,
+  MoreVerticalIcon,
+  TableOfContentsIcon,
+} from "lucide-react";
+import { useEffect, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export const ContentManagement = () => {
-  const { courseId, tierId } = useParams<{
+  const { tierId } = useParams<{
     courseId: string;
     tierId: string;
   }>();
 
   const { data, isLoading, isError } = useFetchTierContents(tierId);
 
-  const [selectedWeek, setSelectedWeek] = useState<string | null>(null);
-  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const weeks = useContentStore((state) => state.weeks);
+  const selectedWeek = useContentStore((state) => state.selectedWeek);
+  const selectedDay = useContentStore((state) => state.selectedDay);
+  const selectWeek = useContentStore((state) => state.selectWeek);
+  const selectDay = useContentStore((state) => state.selectDay);
+  const setWeeks = useContentStore((state) => state.setWeeks);
+  const addWeek = useContentStore((state) => state.addWeek);
+  const addDay = useContentStore((state) => state.addDay);
+  const reset = useContentStore((state) => state.reset);
 
-  // Auto-select first week & day
-  useMemo(() => {
-    if (!data) return;
+  const handleAddWeek = () => {
+    addWeek();
+  };
 
-    const weeks = Object.keys(data.weeks);
-    if (!selectedWeek && weeks.length > 0) {
-      setSelectedWeek(weeks[0]);
+  const handleAddDay = () => {
+    if (!selectedWeek) return;
+    addDay(selectedWeek);
+  };
+
+  useEffect(() => {
+    if (data?.weeks) {
+      setWeeks(data.weeks);
     }
-  }, [data, selectedWeek]);
+  }, [data, setWeeks]);
 
-  useMemo(() => {
-    if (!data || !selectedWeek) return;
+  useEffect(() => () => reset(), [reset]);
 
-    const days = Object.keys(data.weeks[selectedWeek]);
-    if (!selectedDay && days.length > 0) {
-      setSelectedDay(days[0]);
-    }
-  }, [data, selectedWeek, selectedDay]);
+  const weeksList = useMemo<string[]>(() => Object.keys(weeks), [weeks]);
+  const daysList = useMemo<string[]>(
+    () => (selectedWeek ? Object.keys(weeks[selectedWeek] ?? {}) : []),
+    [weeks, selectedWeek]
+  );
+  const contents = useMemo<TierContentItem[]>(() => {
+    if (!selectedWeek || !selectedDay) return [];
+    return weeks[selectedWeek]?.[selectedDay] ?? [];
+  }, [weeks, selectedWeek, selectedDay]);
 
   const navigate = useNavigate();
 
@@ -49,83 +73,117 @@ export const ContentManagement = () => {
       </div>
     );
 
-  const weeks = Object.keys(data.weeks);
-  const days = selectedWeek ? Object.keys(data.weeks[selectedWeek]) : [];
-
-  const contents =
-    selectedWeek && selectedDay ? data.weeks[selectedWeek][selectedDay] : [];
-
   return (
     <div className="min-h-screen bg-[#f8f9fa] text-[#1f2937]">
       {/* Header */}
-      <header className="bg-white border-b border-[#e5e7eb] px-6 py-4">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate(-1)}
-            className="text-[#6b7280] hover:text-[#1f2937] transition-colors"
+      <header className="bg-white border-b border-[#d1d3d9]  px-3 py-2">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <ButtonSm
+              state="outline"
+              onClick={() => navigate(-1)}
+              className="bg-transparent border-none !px-0 !py-0 "
+            >
+              <ArrowLeft size={20} />
+            </ButtonSm>
+            <h1 className="text-md font-medium text-[#1f2937]">
+              Course Library
+            </h1>
+          </div>
+          <ButtonSm
+            type="button"
+            state="default"
+            className="text-sm font-medium"
           >
-            <ArrowLeft size={20} />
-          </button>
-          <h1 className="text-sm font-medium text-[#1f2937]">Course Library</h1>
+            <TableOfContentsIcon className="h-4 w-4" />
+            Add New Content
+          </ButtonSm>
         </div>
       </header>
 
       {/* Main Content */}
       <div className="flex h-[calc(100vh-57px)]">
         {/* Sidebar 1: Weeks */}
-        <div className="w-64 bg-white border-r border-[#e5e7eb] overflow-y-auto">
-          <div className="px-4 py-3 border-b border-[#e5e7eb]">
+        <div className="w-64 bg-white border-r border-[#d1d3d9] overflow-y-auto">
+          <div className="px-4 flex flex-col py-3 border-b border-[#d1d3d9] ">
             <h2 className="text-xs font-semibold text-[#6b7280] uppercase tracking-wider">
               Weeks
             </h2>
           </div>
-          <div className="py-1">
-            {weeks.map((week) => (
+          <div>
+            {weeksList.map((week) => (
               <button
                 key={week}
-                onClick={() => {
-                  setSelectedWeek(week);
-                  setSelectedDay(null);
-                }}
-                className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                onClick={() => selectWeek(week)}
+                className={`w-full flex overflow-clip relative items-center gap-3 text-left px-4 py-2 text-sm transition-colors ${
                   week === selectedWeek
-                    ? "bg-blue-900 text-white font-medium"
+                    ? "bg-gray-100 text-black font-medium"
                     : "text-[#1f2937] hover:bg-[#f3f4f6]"
                 }`}
               >
-                {week}
+                <div
+                  className={`h-16 absolute top-0 left-0 w-1  transition-colors ${
+                    week === selectedWeek ? "bg-gray-800" : "bg-[#d1d3d9]"
+                  }`}
+                />
+                <span className="flex-1">{week}</span>
+
+                <MoreVerticalIcon size={16} />
               </button>
             ))}
+            <ButtonSm
+              type="button"
+              state="outline"
+              onClick={handleAddWeek}
+              className="mt-4 mx-3 justify-center border-dashed !px-3 !py-2 text-xs font-semibold text-[#1f2937]"
+            >
+              + Add Week
+            </ButtonSm>
           </div>
         </div>
 
         {/* Sidebar 2: Days */}
-        <div className="w-64 bg-[#fafafa] border-r border-[#e5e7eb] overflow-y-auto">
-          <div className="px-4 py-3 border-b border-[#e5e7eb]">
+        <div className="w-64 bg-[#fafafa] border-r border-[#d1d3d9]  overflow-y-auto">
+          <div className="px-4 flex flex-col py-3 border-b border-[#d1d3d9] ">
             <h2 className="text-xs font-semibold text-[#6b7280] uppercase tracking-wider">
               Days
             </h2>
           </div>
-          <div className="py-1">
-            {days.map((day) => (
+          <div>
+            {daysList.map((day) => (
               <button
                 key={day}
-                onClick={() => setSelectedDay(day)}
-                className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+                onClick={() => selectDay(day)}
+                className={`w-full flex items-center overflow-clip relative gap-3 text-left px-4 py-2 text-sm transition-colors ${
                   day === selectedDay
-                    ? "bg-blue-900 text-white font-medium"
+                    ? "bg-gray-100 text-black font-medium"
                     : "text-[#1f2937] hover:bg-[#f3f4f6]"
                 }`}
               >
-                {day}
+                <div
+                  className={`h-16 w-1 absolute top-0 left-0  transition-colors ${
+                    day === selectedDay ? "bg-gray-800" : "bg-[#d1d3d9]"
+                  }`}
+                />
+                <span className="flex-1">{day}</span>
+                <MoreVerticalIcon size={16} />
               </button>
             ))}
+            <ButtonSm
+              type="button"
+              state="outline"
+              onClick={handleAddDay}
+              disabled={!selectedWeek}
+              className="mt-4 mx-3 justify-center border-dashed !py-2 text-xs font-semibold text-[#1f2937] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              + Add Day
+            </ButtonSm>
           </div>
         </div>
 
         {/* Main Content Area */}
         <div className="flex-1 overflow-y-auto bg-[#f8f9fa]">
-          <div className="px-6 py-3 border-b border-[#e5e7eb] bg-white">
+          <div className="px-6 py-3 border-b border-[#d1d3d9] bg-white">
             <h2 className="text-xs font-semibold text-[#6b7280] uppercase tracking-wider">
               Contents
             </h2>
@@ -144,7 +202,7 @@ export const ContentManagement = () => {
                   return (
                     <div
                       key={item.id}
-                      className="bg-white border border-[#e5e7eb] rounded-lg p-4 hover:border-blue-600    transition-colors shadow-sm"
+                      className="bg-white border border-[#d1d3d9]  rounded-lg p-4 hover:border-gray-300 cursor-pointer transition-colors"
                     >
                       <div className="flex items-start gap-3">
                         <div className="text-xl">🎥</div>
@@ -169,7 +227,7 @@ export const ContentManagement = () => {
                 return (
                   <div
                     key={item.id}
-                    className="bg-white border border-[#e5e7eb] rounded-lg p-4 hover:border-blue-600    transition-colors shadow-sm"
+                    className="bg-white border border-[#d1d3d9]  rounded-lg p-4 hover:border-gray-300 cursor-pointer transition-colors"
                   >
                     <div className="flex items-start gap-3">
                       <div className="text-xl">📝</div>

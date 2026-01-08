@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, MoreVertical, Edit3, Trash2, Layers } from "lucide-react";
+import { ArrowLeft, MoreVertical, Edit3, Trash2, Blocks } from "lucide-react";
 
 import { useFetchTiersByCourse, useDeleteTier } from "@/queries/tierQuery";
 import type { Tier } from "@/types/tierTypes";
 
 import TierFormModal from "./TierFormModal";
 import ConfirmDeletePopup from "@components/common/ConfirmDeletePopup";
+import ButtonSm from "@/components/common/Button";
 
 const TierManagement = () => {
   const { id: courseId } = useParams<{ id: string }>();
@@ -54,7 +55,7 @@ const TierManagement = () => {
 
   const renderMenu = (tier: Tier) =>
     activeMenuId === tier.id && (
-      <div className="absolute right-3 top-10 z-20 w-44 rounded-md border border-[#e5e7eb] overflow-hidden bg-white shadow-lg">
+      <div className="absolute right-3 top-10 z-20 w-44 rounded-md border border-[#d1d3d9]  overflow-hidden bg-white shadow-lg">
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -81,24 +82,27 @@ const TierManagement = () => {
   return (
     <div className="min-h-screen bg-[#f8f9fa]">
       {/* Header */}
-      <header className="bg-white border-b border-[#e5e7eb] px-6 py-4">
+      <header className="bg-white border-b border-[#d1d3d9]  px-6 py-2">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <button
+            <ButtonSm
+              state="outline"
               onClick={() => navigate(-1)}
-              className="text-[#6b7280] hover:text-[#1f2937] transition-colors"
+              className="bg-transparent border-none !px-0 !py-0 "
             >
               <ArrowLeft size={20} />
-            </button>
-            <h1 className="text-sm font-medium text-[#1f2937]">Course Tiers</h1>
+            </ButtonSm>
+            <h1 className="text-md font-medium text-[#1f2937]">Course Tiers</h1>
           </div>
-          <button
+          <ButtonSm
             type="button"
+            state="default"
             onClick={openCreateModal}
-            className="inline-flex items-center gap-2 rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
+            className="text-sm font-medium "
           >
-            <Layers size={16} /> Create New Tier
-          </button>
+            <Blocks className="h-4 w-4" />
+            Create New Tier
+          </ButtonSm>
         </div>
       </header>
 
@@ -111,9 +115,9 @@ const TierManagement = () => {
         )}
 
         {!isLoading && tiers.length === 0 && (
-          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[#e5e7eb] bg-white py-20 text-center">
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-[#d1d3d9]  bg-white py-20 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#f3f4f6] mb-4">
-              <Layers size={32} className="text-[#9ca3af]" />
+              <Blocks size={32} className="text-[#9ca3af]" />
             </div>
             <h3 className="text-base font-semibold text-[#1f2937] mb-1">
               No tiers found
@@ -127,7 +131,7 @@ const TierManagement = () => {
               onClick={openCreateModal}
               className="inline-flex items-center gap-2 rounded-md bg-blue-900 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 transition-colors"
             >
-              <Layers size={16} /> Create New Tier
+              <Blocks size={16} /> Create New Tier
             </button>
           </div>
         )}
@@ -137,7 +141,7 @@ const TierManagement = () => {
             {tiers.map((tier) => (
               <article
                 key={tier.id}
-                className="group relative rounded-lg border border-[#e5e7eb] bg-white p-5 transition-all hover:border-blue-600    shadow-sm hover:shadow-md"
+                className="group relative rounded-lg border border-[#d1d3d9]  bg-white p-5 transition-all hover:border-gray-300 cursor-pointer"
               >
                 <button
                   onClick={(e) => {
@@ -165,7 +169,7 @@ const TierManagement = () => {
                   {tier.description || "No description provided"}
                 </p>
 
-                <div className="border-t border-[#e5e7eb] pt-4 mt-4">
+                <div className="border-t border-[#d1d3d9]  pt-4 mt-4">
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-[#9ca3af] uppercase tracking-wide">
                       Content
@@ -176,7 +180,7 @@ const TierManagement = () => {
                         e.stopPropagation();
                         navigate(`/course/${courseId}/tier/${tier.id}`);
                       }}
-                      className="inline-flex items-center gap-1.5 rounded-md bg-[#f3f4f6] px-3 py-1.5 text-xs font-medium text-[#1f2937] hover:bg-[#e5e7eb] transition-colors"
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-[#f3f4f6] px-3 py-1.5 text-xs font-medium text-[#1f2937] hover:bg-[#e5e7eb] transition-colors"
                     >
                       Manage Content →
                     </button>

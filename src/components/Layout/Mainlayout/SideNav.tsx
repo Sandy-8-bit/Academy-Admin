@@ -97,10 +97,10 @@ const SideNav: React.FC = () => {
   return (
     <div
       style={{ zoom: 0.85 }}
-      className="floating-container relative flex min-h-[125vh] border-r border-[#f1f1f1]  transition-all duration-300"
+      className="floating-container relative flex min-h-[125vh] border-r border-[#d1d3d9]   transition-all duration-300"
     >
       <motion.section
-        className={`flex h-[115vh] flex-col gap-4 overflow-hidden  border-r border-[#f1f1f1] bg-white px-2.5 pt-4 transition-all duration-300 select-none ${isExpanded ? "w-[280px]" : "w-[100px]"}`}
+        className={`flex h-[115vh] flex-col gap-4 overflow-hidden   bg-white px-2.5 pt-4 transition-all duration-300 select-none ${isExpanded ? "w-[280px]" : "w-[100px]"}`}
         animate={{ x: 0, opacity: 1 }}
       >
         <motion.div
