@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/purity */
-import { motion } from 'framer-motion'
-import { Check } from 'lucide-react'
-import React, { useRef } from 'react'
+import { motion } from "framer-motion";
+import { Check } from "lucide-react";
+import React, { useRef } from "react";
 
-type InputType = 'str' | 'num'
+type InputType = "str" | "num";
 
 /**
  * Generic Input component for handling both string and number values.
@@ -13,42 +13,42 @@ type InputType = 'str' | 'num'
  */
 interface InputProps<T extends string | number> {
   /** Label title above the input field */
-  title: string
+  title: string;
   /** Placeholder text for the input */
-  placeholder?: string
+  placeholder?: string;
   /** Current input value */
-  inputValue: T
+  inputValue: T;
   /**
    * Callback triggered on value change
    * @param value - New value of input
    */
-  onChange: (value: T) => void
+  onChange: (value: T) => void;
   /** Input type - "str" for text, "num" for number */
-  type?: InputType
+  type?: InputType;
   /** Optional input `name` attribute */
-  name?: string
+  name?: string;
   /** Prefix label shown before the input (e.g., ₹ or +91) */
-  prefixText?: string
+  prefixText?: string;
   /** Maximum character length (applies to string input only) */
-  maxLength?: number
+  maxLength?: number;
   /** Minimum numeric value allowed (for type="num") */
-  min?: number
+  min?: number;
   /** Maximum numeric value allowed (for type="num") */
-  max?: number
+  max?: number;
   /** Whether the input is required for form submission */
-  disabled?: boolean
+  disabled?: boolean;
   /** Whether the input is required for form submission */
-  required?: boolean
+  required?: boolean;
   /** Minimum string length allowed (for type="str") */
-  minLength?: number
+  minLength?: number;
   /**
    * @deprecated Use a separate <ReadonlyField /> instead.
    */
-  viewMode?: boolean
+  viewMode?: boolean;
   /** Extra custom CSS classes */
-  className?: string
+  className?: string;
   /** Optional ref forwarded to the underlying input element */
-  inputRef?: React.Ref<HTMLInputElement>
+  inputRef?: React.Ref<HTMLInputElement>;
 }
 
 /**
@@ -70,38 +70,38 @@ interface InputProps<T extends string | number> {
 const Input = <T extends string | number>({
   required = false,
   title,
-  placeholder = '',
+  placeholder = "",
   inputValue,
   onChange,
-  type = 'str',
-  name = '',
-  prefixText = '',
+  type = "str",
+  name = "",
+  prefixText = "",
   maxLength = 36,
   min,
   max,
-  className = '',
+  className = "",
   disabled = false,
   minLength = 0,
   viewMode = false, //depriciate dont-use
   inputRef,
 }: InputProps<T>) => {
-  const inputType = type === 'num' ? 'number' : 'text'
+  const inputType = type === "num" ? "number" : "text";
 
   /**
    * Handles input changes with type-aware validation.
    */
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const raw = e.target.value
+    const raw = e.target.value;
 
-    if (type === 'num') {
-      if (raw === '') {
-        onChange('' as T)
-        return
+    if (type === "num") {
+      if (raw === "") {
+        onChange("" as T);
+        return;
       }
 
       // Allow intermediate decimal input like "12." or "0."
       if (/^\d*\.?\d*$/.test(raw)) {
-        const num = parseFloat(raw)
+        const num = parseFloat(raw);
 
         // Skip NaN for incomplete input like "."
         if (!isNaN(num)) {
@@ -109,18 +109,18 @@ const Input = <T extends string | number>({
             (min !== undefined && num < min) ||
             (max !== undefined && num > max)
           )
-            return
-          onChange(num as T)
+            return;
+          onChange(num as T);
         } else {
           // Still call onChange for partial decimals like "12."
-          onChange(raw as T)
+          onChange(raw as T);
         }
       }
     } else {
       // For non-numeric input, just pass the string
-      onChange(raw as T)
+      onChange(raw as T);
     }
-  }
+  };
 
   return (
     <motion.div
@@ -130,12 +130,12 @@ const Input = <T extends string | number>({
       className="relative w-full min-w-[180px] self-stretch"
     >
       <h3
-        className={`mb-0.5 w-full justify-start ${viewMode ? 'text-base font-medium text-slate-600' : 'text-xs leading-loose font-semibold text-slate-700'}`}
+        className={`mb-0.5 w-full justify-start ${viewMode ? "text-base font-medium text-slate-600" : "text-xs leading-loose font-semibold text-slate-700"}`}
       >
         {title} {required && <span className="text-red-500"> *</span>}
       </h3>
       <div
-        className={`input-container flex cursor-text flex-row items-center justify-center gap-0 overflow-clip rounded-xl ${viewMode ? '' : 'border-2 border-[#F1F1F1] bg-white transition-all focus-within:border-slate-500'} `}
+        className={`input-container flex cursor-text flex-row items-center justify-center gap-0 overflow-clip rounded-xl ${viewMode ? "" : "border-2 border-[#F1F1F1] bg-white transition-all focus-within:border-slate-500"} `}
       >
         {prefixText && (
           <div className="flex h-full min-w-[35px] items-center justify-center bg-slate-100 px-3 py-2 text-center align-middle text-sm leading-loose font-medium text-slate-700 lg:min-w-[45px]">
@@ -150,31 +150,31 @@ const Input = <T extends string | number>({
           disabled={disabled}
           type={inputType}
           name={name}
-          step={type === 'num' ? '.1' : undefined}
+          step={type === "num" ? ".1" : undefined}
           placeholder={placeholder}
           onChange={handleChange}
           value={inputValue}
           className={`custom-disabled-cursor hover:cursor[text]:color-black min-h-max w-full ${
-            disabled ? 'bg-slate-200' : 'cursor-text'
-          } ${className} text-start ${viewMode ? 'text-base font-medium text-slate-900' : 'px-3 py-3 text-sm font-medium text-slate-600 autofill:text-black focus:outline-none'} read-only:cursor-default read-only:bg-white`}
-          maxLength={type === 'str' ? maxLength : undefined}
-          min={type === 'num' ? min : undefined}
-          max={type === 'num' ? max : undefined}
-          minLength={type === 'str' ? minLength : undefined}
+            disabled ? "bg-slate-200" : "cursor-text"
+          } ${className} text-start ${viewMode ? "text-base font-medium text-slate-900" : "px-3 py-3 text-sm font-medium text-slate-600 autofill:text-black focus:outline-none"} read-only:cursor-default read-only:bg-white`}
+          maxLength={type === "str" ? maxLength : undefined}
+          min={type === "num" ? min : undefined}
+          max={type === "num" ? max : undefined}
+          minLength={type === "str" ? minLength : undefined}
         />
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
-export default Input
+export default Input;
 
 interface CheckBoxProps {
-  checked: boolean
-  disabled?: boolean
-  className?: string
-  label?: string
-  onChange: (value: boolean) => void
+  checked: boolean;
+  disabled?: boolean;
+  className?: string;
+  label?: string;
+  onChange: (value: boolean) => void;
 }
 
 /**
@@ -192,7 +192,7 @@ export const CheckBox: React.FC<CheckBoxProps> = ({
   const uniqueId = React.useMemo(
     () => `checkbox-${label || Math.random().toString(36).substr(2, 9)}`,
     [label]
-  )
+  );
 
   return (
     <motion.div
@@ -212,10 +212,10 @@ export const CheckBox: React.FC<CheckBoxProps> = ({
         />
         <label
           htmlFor={uniqueId}
-          className={`relative flex max-h-3 max-w-3 ${disabled ? 'cursor-default' : 'cursor-pointer'} rounded-md border-2 p-4 transition-all outline-none focus:outline-none ${
+          className={`relative flex max-h-3 max-w-3 ${disabled ? "cursor-default" : "cursor-pointer"} rounded-md border-2 p-4 transition-all outline-none focus:outline-none ${
             checked
-              ? 'border-transparent bg-orange-500'
-              : 'border-[#F1F1F1] bg-white shadow-sm'
+              ? "border-transparent bg-blue-500"
+              : "border-[#F1F1F1] bg-white shadow-sm"
           }`}
         >
           {checked && (
@@ -228,16 +228,16 @@ export const CheckBox: React.FC<CheckBoxProps> = ({
         </label>
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
 interface InputCheckboxProps {
-  title: string
-  checked: boolean
-  disabled?: boolean
-  className?: string
-  label?: string
-  onChange: (value: boolean) => void
+  title: string;
+  checked: boolean;
+  disabled?: boolean;
+  className?: string;
+  label?: string;
+  onChange: (value: boolean) => void;
 }
 
 /**
@@ -256,7 +256,7 @@ export const InputCheckbox: React.FC<InputCheckboxProps> = ({
   const uniqueId = React.useMemo(
     () => `input-checkbox-${title}-${Math.random().toString(36).substr(2, 9)}`,
     [title]
-  )
+  );
 
   return (
     <motion.div
@@ -286,10 +286,10 @@ export const InputCheckbox: React.FC<InputCheckboxProps> = ({
           />
           <label
             htmlFor={uniqueId}
-            className={`relative block h-5 w-5 ${disabled ? 'cursor-default' : 'cursor-pointer'} rounded-md border-2 p-3 transition-all outline-none focus:outline-none ${
+            className={`relative block h-5 w-5 ${disabled ? "cursor-default" : "cursor-pointer"} rounded-md border-2 p-3 transition-all outline-none focus:outline-none ${
               checked
-                ? 'border-orange-500 bg-orange-500'
-                : 'border-[#F1F1F1] bg-slate-100 shadow-sm'
+                ? "border-gray-800 bg-gray-800"
+                : "border-[#F1F1F1] bg-slate-100 shadow-sm"
             }`}
           >
             {checked && (
@@ -299,35 +299,35 @@ export const InputCheckbox: React.FC<InputCheckboxProps> = ({
         </div>
       </div>
     </motion.div>
-  )
-}
+  );
+};
 
 interface DateInputProps {
-  title?: string
-  value: string
-  onChange: (val: string) => void
-  name?: string
-  placeholder?: string
-  required?: boolean
-  disabled?: boolean
-  maxDate?: string
+  title?: string;
+  value: string;
+  onChange: (val: string) => void;
+  name?: string;
+  placeholder?: string;
+  required?: boolean;
+  disabled?: boolean;
+  maxDate?: string;
 }
 
 export const DateInput: React.FC<DateInputProps> = ({
   title,
   value,
   onChange,
-  name = '',
-  placeholder = 'Select date',
+  name = "",
+  placeholder = "Select date",
   required = false,
   disabled = false,
   maxDate,
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value)
-  }
+    onChange(e.target.value);
+  };
 
   return (
     <div className="relative w-full min-w-[180px] self-stretch">
@@ -339,23 +339,23 @@ export const DateInput: React.FC<DateInputProps> = ({
 
       <div
         onClick={() => {
-          if (!disabled) inputRef.current?.showPicker?.()
-          inputRef.current?.focus()
+          if (!disabled) inputRef.current?.showPicker?.();
+          inputRef.current?.focus();
         }}
         className={`input-container group flex flex-row items-center justify-between gap-2 overflow-clip rounded-xl border-2 border-[#F1F1F1] bg-white transition-all select-none ${
           !disabled
-            ? 'cursor-pointer focus-within:border-slate-500'
-            : 'cursor-not-allowed'
+            ? "cursor-pointer focus-within:border-slate-500"
+            : "cursor-not-allowed"
         }`}
       >
         <input
           style={{
-            userSelect: 'none',
-            WebkitUserSelect: 'none',
-            MozUserSelect: 'none',
-            msUserSelect: 'none',
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            MozUserSelect: "none",
+            msUserSelect: "none",
             zoom: 1,
-            WebkitAppearance: 'textfield',
+            WebkitAppearance: "textfield",
           }}
           ref={inputRef}
           required={required}
@@ -371,10 +371,10 @@ export const DateInput: React.FC<DateInputProps> = ({
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
 export interface DropdownOption {
-  label: string
-  id: number
+  label: string;
+  id: number;
 }

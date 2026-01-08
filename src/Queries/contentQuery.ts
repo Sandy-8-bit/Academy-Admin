@@ -52,9 +52,22 @@ export const useCreateTierContent = () => {
     const token = authHandler();
 
     try {
+      // Convert test_duration from minutes to seconds if it's a test
+      const processedPayload = {
+        ...payload,
+        ...(payload.module_type === "test" && payload.test
+          ? {
+              test: {
+                ...payload.test,
+                test_duration: payload.test.test_duration * 60,
+              },
+            }
+          : {}),
+      };
+
       const res = await axiosInstance.post<TierContentItem>(
         `${apiRoutes.contentById}/${tierId}/contents`,
-        payload,
+        processedPayload,
         {
           headers: {
             Authorization: `Bearer ${token}`,

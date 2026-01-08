@@ -8,6 +8,7 @@ import { ArrowLeft, MoreVerticalIcon, TableOfContentsIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AddVideoDrawer from "./AddVideoDrawer";
+import AddTestDrawer from "./AddTestDrawer";
 
 export const ContentManagement = () => {
   const { tierId } = useParams<{
@@ -17,6 +18,7 @@ export const ContentManagement = () => {
 
   const { data, isLoading, isError } = useFetchTierContents(tierId);
   const [isAddVideoOpen, setIsAddVideoOpen] = useState(false);
+  const [isAddTestOpen, setIsAddTestOpen] = useState(false);
   const weeks = useContentStore((state) => state.weeks);
   const selectedWeek = useContentStore((state) => state.selectedWeek);
   const selectedDay = useContentStore((state) => state.selectedDay);
@@ -90,7 +92,7 @@ export const ContentManagement = () => {
           <ButtonSm
             type="button"
             state="default"
-            className="text-sm font-medium"
+            className="text-sm opacity-0! font-medium"
           >
             <TableOfContentsIcon className="h-4 w-4" />
             Add New Content
@@ -197,6 +199,21 @@ export const ContentManagement = () => {
                 />
               </DialogBox>
             )}
+            {isAddTestOpen && (
+              <DialogBox
+                setToggleDialogueBox={setIsAddTestOpen}
+                isSideDrawer={true}
+                width="800px"
+              >
+                <AddTestDrawer
+                  tierId={tierId}
+                  weekLabel={selectedWeek}
+                  dayLabel={selectedDay}
+                  contentsCount={contents.length}
+                  onClose={() => setIsAddTestOpen(false)}
+                />
+              </DialogBox>
+            )}
           </AnimatePresence>
           <div className="px-6 py-3 border-b border-[#d1d3d9] bg-white">
             <h2 className="text-xs font-semibold text-[#6b7280] uppercase tracking-wider">
@@ -221,6 +238,7 @@ export const ContentManagement = () => {
               </ButtonSm>
               <ButtonSm
                 type="button"
+                onClick={() => setIsAddTestOpen(true)}
                 state="default"
                 disabled={!selectedWeek || !selectedDay || !tierId}
               >
