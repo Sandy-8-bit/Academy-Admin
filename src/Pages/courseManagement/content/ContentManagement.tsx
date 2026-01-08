@@ -222,11 +222,6 @@ export const ContentManagement = () => {
           </div>
 
           <div className="p-6 flex flex-col gap-6">
-            {contents.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-[#6b7280] text-sm">No content available</p>
-              </div>
-            )}
             <div className="action-buttons flex flex-row gap-2 items-center">
               <ButtonSm
                 onClick={() => setIsAddVideoOpen(true)}
@@ -245,6 +240,12 @@ export const ContentManagement = () => {
                 + Add New Test
               </ButtonSm>
             </div>
+
+            {contents.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-[#6b7280] text-sm">No content available</p>
+              </div>
+            )}
 
             <div className="space-y-3">
               {contents.map((item) => {
