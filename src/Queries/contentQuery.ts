@@ -10,6 +10,35 @@ import {
 import { apiRoutes } from "@/routes/apiRoutes";
 import toast from "react-hot-toast";
 
+export type UpdateTierContentPayload =
+  | {
+      module_type: "video";
+      week?: number;
+      day?: number;
+      video: {
+        title: string;
+        description: string;
+        video_url: string;
+        thumbnail_url: string;
+        duration: number;
+      };
+    }
+  | {
+      module_type: "test";
+      week?: number;
+      day?: number;
+      test: {
+        title: string;
+        test_duration: number;
+        quizzes: Array<{
+          question: string;
+          choices: string[];
+          answer: string[];
+          isMultiChoice: boolean;
+        }>;
+      };
+    };
+
 /* -------------------- GET TIER CONTENTS -------------------- */
 export const useFetchTierContents = (tierId: string | undefined) => {
   const fetchTierContents = async (): Promise<TierContentsResponse> => {
@@ -85,6 +114,62 @@ export const useCreateTierContent = () => {
     mutationFn: createTierContent,
     onSuccess: (_, variables) => {
       toast.success("Content added successfully");
+      queryClient.invalidateQueries({
+        queryKey: ["tier-contents", variables.tierId],
+      });
+    },
+  });
+};
+
+/* -------------------- UPDATE TIER CONTENT -------------------- */
+export const useUpdateTierContent = () => {
+  const queryClient = useQueryClient();
+
+  const updateTierContent = async ({
+    tierId,
+    contentId,
+    payload,
+  }: {
+    tierId: string;
+    contentId: string;
+    payload: UpdateTierContentPayload;
+  }): Promise<TierContentItem> => {
+    const token = authHandler();
+
+    try {
+      // Convert test_duration from minutes to seconds if it's a test
+      const processedPayload = {
+        ...payload,
+        ...(payload.module_type === "test" && payload.test
+          ? {
+              test: {
+                ...payload.test,
+                test_duration: payload.test.test_duration * 60,
+              },
+            }
+          : {}),
+      };
+
+      const res = await axiosInstance.patch<TierContentItem>(
+        `${apiRoutes.contentById}/${tierId}/contents/${contentId}`,
+        processedPayload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return res.data;
+    } catch (error) {
+      handleApiError(error, "update tier content");
+    }
+  };
+
+  return useMutation({
+    mutationFn: updateTierContent,
+    onSuccess: (_, variables) => {
+      toast.success("Content updated successfully");
       queryClient.invalidateQueries({
         queryKey: ["tier-contents", variables.tierId],
       });
