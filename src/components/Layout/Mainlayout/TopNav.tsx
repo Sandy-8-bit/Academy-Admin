@@ -54,14 +54,14 @@ export const TopNav: React.FC<TopNavProps> = ({ userName, formattedDate }) => {
             >
               Welcome, {userName}
             </motion.h1>
-            <motion.p
+            {/* <motion.p
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
               className="text-md text-zinc-500"
             >
               {formattedDate}
-            </motion.p>
+            </motion.p>`   */}
           </div>
         </div>
 
@@ -70,7 +70,7 @@ export const TopNav: React.FC<TopNavProps> = ({ userName, formattedDate }) => {
           initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2 }}
-          className="flex scale-90 items-center gap-5"
+          className="flex items-center gap-5 scale-75"
         >
           <NotificationCenter notifications={2} />
 

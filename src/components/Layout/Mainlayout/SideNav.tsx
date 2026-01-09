@@ -1,286 +1,221 @@
-/* eslint-disable react-hooks/set-state-in-effect */
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { motion } from "motion/react";
-import {
-  LayoutDashboardIcon,
-  LogOut,
-  PackageOpen,
-  type LucideIcon,
-} from "lucide-react";
-import { appRoutes } from "../../../routes/appRoutes";
-import { useLogoutMutation } from "../../../queries/signInQuery";
-import Cookies from "js-cookie";
+import { useState, useCallback, useMemo, useEffect } from "react";
+import { BookOpen, LayoutDashboard, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import ButtonSm from "../../common/Button";
+import { appRoutes } from "@/routes/appRoutes";
 
-type NavigationSection = "main" | "orders" | "settings";
+const SideNav = () => {
+  const navigate = useNavigate();
 
-interface NavigationItem {
-  label: string;
-  path: string;
-  icon: LucideIcon;
-  section: NavigationSection;
-}
-
-const NAVIGATION_SECTIONS: Array<{ title: string; key: NavigationSection }> = [
-  { title: "Main Menu", key: "main" },
-  { title: "Order Management", key: "orders" },
-  { title: "Settings", key: "settings" },
-];
-
-const SideNav: React.FC = () => {
-  const [activeRoute, setActiveRoute] = useState<string>("");
-  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [activeRoute, setActiveRoute] = useState("/dashboard");
+  const [isHovered, setIsHovered] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   useEffect(() => {
     const currentPath = window.location.pathname;
-
     setActiveRoute(currentPath);
   }, []);
 
-  const navigateToRoute = useCallback((route: string) => {
-    setActiveRoute(route);
-    window.history.pushState({}, "", route);
-    window.dispatchEvent(new PopStateEvent("popstate"));
-  }, []);
-
-  const isRouteActive = (route: string): boolean => {
-    return activeRoute === route;
-  };
-
-  const navigationItems: NavigationItem[] = useMemo(
+  const navigationItems = useMemo(
     () => [
       {
         label: "Home",
         path: appRoutes.dashboard,
-        icon: LayoutDashboardIcon,
-
+        icon: LayoutDashboard,
         section: "main",
       },
       {
         label: "Course Management",
         path: appRoutes.course.path,
-        icon: PackageOpen,
-
+        icon: BookOpen,
         section: "main",
       },
     ],
     []
   );
 
-  const navigate = useNavigate();
-  const { mutate: logout } = useLogoutMutation();
-
   const handleLogout = useCallback(() => {
-    logout(undefined, {
-      onSuccess: () => {
-        // ✅ Clear cookies
-        Cookies.remove("token-dmif", { path: "/" });
-
-        // ✅ Clear localStorage (auth-related or full)
-        localStorage.removeItem("token-dmif");
-        localStorage.removeItem("user"); // if exists
-        localStorage.removeItem("supabase.auth.token"); // safety
-
-        // ✅ Optional: clear sessionStorage too
-        sessionStorage.clear();
-
-        // ✅ Redirect to sign-in
-        navigate(appRoutes.signInPage, { replace: true });
-      },
-    });
-  }, [logout, navigate]);
-
-  const toggleExpansion = () => setIsExpanded((prev) => !prev);
+    console.log("Logging out...");
+    setShowLogoutConfirm(false);
+  }, []);
 
   return (
-    <div
-      style={{ zoom: 0.85 }}
-      className="floating-container relative flex min-h-[125vh] border-r border-[#d1d3d9]   transition-all duration-300"
-    >
-      <motion.section
-        className={`flex h-[115vh] flex-col gap-4 overflow-hidden   bg-white px-2.5 pt-4 transition-all duration-300 select-none ${isExpanded ? "w-[280px]" : "w-[100px]"}`}
-        animate={{ x: 0, opacity: 1 }}
+    <>
+      <div
+        className="fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-[#d1d3d9] bg-white transition-all duration-200 ease-in-out"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        style={{ width: isHovered ? "280px" : "72px" }}
       >
-        <motion.div
-          className={`mt-1 flex w-full items-center ${isExpanded ? "justify-between gap-3 rounded-xl border-2 border-[#eeeeee] bg-white p-2" : "flex-col gap-3"} px-1.5`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.2, duration: 0.4 }}
-        >
-          <img
-            onClick={() => toggleExpansion()}
-            src="/logs1.webp"
-            className={`${isExpanded ? "h-14 w-14 self-center" : "h-16 w-16 self-center"} `}
-          />
-
-          {isExpanded && (
-            <div className="flex w-full flex-col">
-              <span className="text-md min-w-max font-semibold text-slate-900">
+        {/* Logo Section */}
+        <div className="flex shrink-0 items-center border-b border-[#d1d3d9] py-2 px-4">
+          <div className="flex min-w-0 items-center justify-center gap-3">
+            <img className="self-center mx-auto" src="/logs1.webp" width={32} />
+            <div
+              className="flex min-w-0 flex-col transition-all duration-200 ease-in-out"
+              style={{
+                opacity: isHovered ? 1 : 0,
+                visibility: isHovered ? "visible" : "hidden",
+              }}
+            >
+              <span className="truncate text-sm font-semibold text-slate-900">
                 Certification
               </span>
-              <span className="text-sm text-slate-500">Admin</span>
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={toggleExpansion}
-            aria-label="Collapse navigation"
-            className={`mr-2 cursor-pointer rounded-sm border-2 border-[#F1F1F1] p-1 text-slate-400 transition hover:text-slate-600 focus:outline-none ${isExpanded ? "" : "rotate-180"}`}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="11 17 6 12 11 7" />
-              <polyline points="18 17 13 12 18 7" />
-            </svg>
-          </button>
-        </motion.div>
-        <motion.div
-          className="flex h-full w-full flex-col items-center justify-start self-stretch overflow-y-auto"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-        >
-          <div
-            className={`flex w-full flex-col ${isExpanded ? "gap-0" : "items-center gap-0"}`}
-          >
-            {NAVIGATION_SECTIONS.map(({ title, key }) => {
-              const sectionItems = navigationItems.filter(
-                (item) => item.section === key
-              );
-
-              if (sectionItems.length === 0) {
-                return null;
-              }
-
-              return (
-                <React.Fragment key={key}>
-                  {isExpanded && (
-                    <h4 className="my-3 mt-2 px-3 text-sm font-medium text-slate-500">
-                      {title}
-                    </h4>
-                  )}
-                  {sectionItems.map((item) => (
-                    <NavigationButton
-                      key={item.path}
-                      labelName={item.label}
-                      isActive={isRouteActive(item.path)}
-                      Icon={item.icon}
-                      onClick={() => navigateToRoute(item.path)}
-                      isExpanded={isExpanded}
-                    />
-                  ))}
-                </React.Fragment>
-              );
-            })}
-          </div>
-          <button
-            type="button"
-            onClick={() => setShowLogoutConfirm(true)}
-            className={`mt-auto w-full cursor-pointer rounded-[12px] border-2 border-transparent text-red-600 transition-all duration-300 ease-in-out ${isExpanded ? "flex items-center justify-start gap-3 px-3 py-2 hover:border-[#eeeeee] hover:bg-white" : "flex flex-col items-center px-1.5 py-2 text-center"}`}
-          >
-            <div
-              className={`flex items-center justify-center rounded-[10px] transition-all duration-200 ease-in-out ${isExpanded ? "h-11 w-11 bg-white/30 text-red-500" : "mb-1 h-12 w-12 text-red-500 hover:bg-red-100"}`}
-            >
-              <LogOut className="h-5 w-5" />
-            </div>
-            {isExpanded ? (
-              <span className="text-base font-semibold">Logout</span>
-            ) : (
-              <h4 className="text-sm font-semibold">Logout</h4>
-            )}
-          </button>
-        </motion.div>
-      </motion.section>
-
-      {showLogoutConfirm && (
-        <div className="fixed inset-0 z-999 flex items-center justify-center bg-black/40">
-          <div className="w-full max-w-[360px] rounded-xl bg-white p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-slate-900">
-              Confirm Logout
-            </h3>
-
-            <p className="mt-2 text-sm text-slate-600">
-              Are you sure you want to log out?
-            </p>
-
-            <div className="mt-6 flex justify-end gap-3">
-              <ButtonSm
-                state="outline"
-                text="Cancel"
-                onClick={() => setShowLogoutConfirm(false)}
-              />
-
-              <ButtonSm
-                state="danger"
-                text="Logout"
-                isPending={false}
-                onClick={() => {
-                  setShowLogoutConfirm(false);
-                  handleLogout();
-                }}
-              />
+              <span className="truncate text-xs text-slate-500">
+                Admin Portal
+              </span>
             </div>
           </div>
         </div>
+
+        {/* Navigation Section */}
+        <nav className="scrollbar-hide flex-1 overflow-y-auto py-4">
+          <div className="space-y-1 px-2 gap-1.5 flex flex-col">
+            {/* Navigation Items */}
+            {navigationItems.map((item) => (
+              <button
+                key={item.path}
+                type="button"
+                onClick={() => {
+                  // setActiveRoute(item.path);
+                  navigate(item.path);
+                }}
+                className={`group relative flex w-max mx-auto items-center rounded-md transition-all duration-200 ease-in-out ${
+                  activeRoute === item.path
+                    ? "bg-gray-100 text-black "
+                    : "text-black hover:bg-gray-100"
+                } ${isHovered ? "gap-3 px-3 py-2.5 w-full!" : "justify-center px-3 py-2.5"}`}
+              >
+                <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+                  <item.icon className="h-5 w-5" />
+                </div>
+                <span
+                  className="min-w-0 truncate text-sm font-medium transition-all duration-200 ease-in-out"
+                  style={{
+                    opacity: isHovered ? 1 : 0,
+                    width: isHovered ? "auto" : "0",
+                    visibility: isHovered ? "visible" : "hidden",
+                  }}
+                >
+                  {item.label}
+                </span>
+
+                {/* Tooltip for collapsed state */}
+                {!isHovered && (
+                  <div className="pointer-events-none absolute left-full ml-2 hidden rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white opacity-0  transition-opacity duration-150 group-hover:block group-hover:opacity-100">
+                    <span className="whitespace-nowrap">{item.label}</span>
+                    <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-900" />
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
+        </nav>
+
+        {/* Logout Section */}
+        <div className="shrink-0 border-t border-[#d1d3d9] p-2">
+          <button
+            type="button"
+            onClick={() => setShowLogoutConfirm(true)}
+            className={`group relative flex w-full items-center rounded-lg text-slate-700 transition-all duration-200 ease-in-out hover:bg-red-50 hover:text-red-600 ${
+              isHovered ? "gap-3 px-3 py-2.5" : "justify-center px-3 py-2.5"
+            }`}
+          >
+            <div className="flex h-5 w-5 shrink-0 items-center justify-center">
+              <LogOut className="h-5 w-5" />
+            </div>
+            <span
+              className="min-w-0 truncate text-sm font-medium transition-all duration-200 ease-in-out"
+              style={{
+                opacity: isHovered ? 1 : 0,
+                width: isHovered ? "auto" : "0",
+                visibility: isHovered ? "visible" : "hidden",
+              }}
+            >
+              Logout
+            </span>
+
+            {/* Tooltip for collapsed state */}
+            {!isHovered && (
+              <div className="pointer-events-none absolute left-full ml-2 hidden rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-medium text-white opacity-0  transition-opacity duration-150 group-hover:block group-hover:opacity-100">
+                <span className="whitespace-nowrap">Logout</span>
+                <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-900" />
+              </div>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <>
+          <div
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+            onClick={() => setShowLogoutConfirm(false)}
+            style={{ animation: "fadeIn 0.15s ease-out" }}
+          />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div
+              className="w-full max-w-md rounded-xl bg-white p-6 "
+              style={{ animation: "scaleIn 0.15s ease-out" }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-lg font-semibold text-slate-900">
+                Confirm Logout
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                Are you sure you want to log out? You'll need to sign in again
+                to access your account.
+              </p>
+              <div className="mt-6 flex justify-end gap-3">
+                <button
+                  onClick={() => setShowLogoutConfirm(false)}
+                  className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  Logout
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
-    </div>
+
+      {/* Spacer for content layout */}
+      <div className="w-[72px] shrink-0" />
+
+      <style>{`
+        /* Hide scrollbar while maintaining functionality */
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        @keyframes scaleIn {
+          from { 
+            opacity: 0; 
+            transform: scale(0.95); 
+          }
+          to { 
+            opacity: 1; 
+            transform: scale(1); 
+          }
+        }
+      `}</style>
+    </>
   );
 };
 
 export default SideNav;
-
-interface NavigationButtonProps {
-  labelName: string;
-  isActive: boolean;
-  Icon: LucideIcon;
-  onClick?: () => void;
-  isExpanded: boolean;
-}
-
-const NavigationButton: React.FC<NavigationButtonProps> = ({
-  labelName,
-  isActive,
-  Icon,
-  onClick,
-  isExpanded,
-}) => {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`Navigation-button-container w-full cursor-pointer rounded-[12px] border-2 border-transparent transition-all duration-300 ease-in-out ${isExpanded ? `flex items-center justify-start gap-3 px-3 py-2 ${isActive ? "border-2! border-[#eeeeee]! bg-blue-800  text-white" : ""}` : `flex scale-90 flex-col items-center px-1.5 py-2 text-center`}`}
-    >
-      <div
-        className={`flex items-center justify-center rounded-[10px] transition-all ${isExpanded ? "h-11 w-11 " : `mb-1 h-12 w-12 ${isActive ? "bg-blue-800" : ""} `}`}
-      >
-        {Icon && (
-          <Icon
-            size={24}
-            className={isActive ? "text-white" : "text-slate-700"}
-          />
-        )}
-      </div>
-      {isExpanded ? (
-        <span
-          className={`text-base ${isActive ? "font-medium text-white" : "font-medium text-slate-700"} `}
-        >
-          {labelName}
-        </span>
-      ) : (
-        <h4 className={`scale-95 text-sm font-medium text-slate-700`}>
-          {labelName}
-        </h4>
-      )}
-    </button>
-  );
-};
