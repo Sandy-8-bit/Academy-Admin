@@ -44,7 +44,7 @@ const SideNav = () => {
         className="fixed left-0 top-0 z-40 flex h-screen flex-col border-r border-[#d1d3d9] bg-white transition-all duration-200 ease-in-out"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        style={{ width: isHovered ? "280px" : "72px" }}
+        style={{ width: isHovered ? "280px" : "64px" }}
       >
         {/* Logo Section */}
         <div className="flex shrink-0 items-center border-b border-[#d1d3d9] py-2 px-4">
@@ -186,7 +186,7 @@ const SideNav = () => {
       )}
 
       {/* Spacer for content layout */}
-      <div className="w-[72px] shrink-0" />
+      <div className="w-[64px] shrink-0" />
 
       <style>{`
         /* Hide scrollbar while maintaining functionality */
