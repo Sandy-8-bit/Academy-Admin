@@ -11,6 +11,7 @@ import {
   VideoIcon,
   NotebookIcon,
   Video,
+  Ellipsis,
 } from "lucide-react";
 import { useEffect, useMemo, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -18,13 +19,15 @@ import AddVideoDrawer from "./AddVideoDrawer";
 import AddTestDrawer from "./AddTestDrawer";
 import EditVideoDrawer from "./EditVideoDrawer";
 import EditTestDrawer from "./EditTestDrawer";
+import VideoPreviewSidebar from "./VideoPreviewSidebar";
+import type { VideoContent } from "@/types/courseContent";
 
 export const ContentManagement = () => {
   const { tierId } = useParams<{
     courseId: string;
     tierId: string;
   }>();
-
+  const [previewContentId, setPreviewContentId] = useState<string | null>(null);
   const { data, isLoading, isError } = useFetchTierContents(tierId);
   const [isAddVideoOpen, setIsAddVideoOpen] = useState(false);
   const [isAddTestOpen, setIsAddTestOpen] = useState(false);
@@ -42,7 +45,8 @@ export const ContentManagement = () => {
   const addWeek = useContentStore((state) => state.addWeek);
   const addDay = useContentStore((state) => state.addDay);
   const reset = useContentStore((state) => state.reset);
-
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewVideo, setPreviewVideo] = useState<VideoContent | null>(null);
   const handleAddWeek = () => {
     addWeek();
   };
@@ -108,7 +112,7 @@ export const ContentManagement = () => {
             <ButtonSm
               state="outline"
               onClick={() => navigate(-1)}
-              className="bg-transparent border-none !px-0 !py-0 "
+              className="bg-transparent border-none px-0! py-0! "
             >
               <ArrowLeft size={20} />
             </ButtonSm>
@@ -161,7 +165,7 @@ export const ContentManagement = () => {
               type="button"
               state="outline"
               onClick={handleAddWeek}
-              className="mt-4 mx-3 justify-center border-dashed !px-3 !py-2 text-xs font-semibold text-[#1f2937]"
+              className="mt-4 mx-3 justify-center border-dashed px-3! py-2! text-xs font-semibold text-[#1f2937]"
             >
               + Add Week
             </ButtonSm>
@@ -200,7 +204,7 @@ export const ContentManagement = () => {
               state="outline"
               onClick={handleAddDay}
               disabled={!selectedWeek}
-              className="mt-4 mx-3 justify-center border-dashed !py-2 text-xs font-semibold text-[#1f2937] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-4 mx-3 justify-center border-dashed py-2! text-xs font-semibold text-[#1f2937] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               + Add Day
             </ButtonSm>
@@ -348,13 +352,31 @@ export const ContentManagement = () => {
               </div>
             )}
 
+        {previewVideo && previewContentId && (
+  <VideoPreviewSidebar
+    open={previewOpen}
+    video={previewVideo}
+    contentId={previewContentId} // ✅ pass ID
+    onClose={() => {
+      setPreviewOpen(false);
+      setPreviewVideo(null);
+      setPreviewContentId(null);
+    }}
+  />
+)}
+
+
             <div className="space-y-2">
               {contents.map((item) => {
                 if (item.module_type === "video") {
                   return (
                     <div
                       key={item.id}
-                      onClick={() => setSelectedContentId(item.id)}
+                      onClick={() => {
+                        setPreviewVideo(item.video);
+                        setPreviewOpen(true);
+                        setPreviewContentId(item.id);
+                      }}
                       className="group relative overflow-hidden rounded-lg border border-[#e5e7eb] bg-white transition-all duration-200 hover:border-[#d1d3d9]  cursor-pointer"
                     >
                       <div className="flex items-center gap-3 p-3">
@@ -386,7 +408,15 @@ export const ContentManagement = () => {
                         </div>
 
                         {/* Video Badge */}
-                        <div className="shrink-0">
+                        <div className="shrink-0 flex flex-col items-center gap-2">
+                          <div
+                            onClick={(e) => {
+                              e.stopPropagation(); // 🔥 important
+                              setSelectedContentId(item.id);
+                            }}
+                          >
+                            <Ellipsis className="h-4 w-4 cursor-pointer hover:text-green-500 transition" />
+                          </div>
                           <span className="text-xs font-semibold text-white bg-[#3ecf8e] px-2.5 py-1 rounded-full whitespace-nowrap">
                             VIDEO
                           </span>

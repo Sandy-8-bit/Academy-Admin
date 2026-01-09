@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
-import MainLayout from "./components/Layout/mainLayout/MainLayout";
+import MainLayout from "@components/layout/mainlayout/MainLayout";
 import { appRoutes } from "./routes/appRoutes";
 import { Spinner } from "./components/common/Buttons";
 import TierManagement from "./pages/courseManagement/tier/TierManagement";

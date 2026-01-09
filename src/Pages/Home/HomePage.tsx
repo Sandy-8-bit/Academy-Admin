@@ -1,4 +1,4 @@
-import { TopNav } from "@/components/Layout/mainLayout/TopNav";
+import { TopNav } from "@components/layout/mainlayout/TopNav";
 import { useFetchUserMe } from "@/queries/userQuery";
 import {
   BookOpen,

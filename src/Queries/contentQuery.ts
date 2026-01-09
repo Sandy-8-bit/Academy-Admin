@@ -39,6 +39,11 @@ export type UpdateTierContentPayload =
       };
     };
 
+interface VideoPlayResponse {
+  video_url: string;   // adjust based on your backend response
+  duration?: number;
+}
+
 /* -------------------- GET TIER CONTENTS -------------------- */
 export const useFetchTierContents = (tierId: string | undefined) => {
   const fetchTierContents = async (): Promise<TierContentsResponse> => {
@@ -66,6 +71,40 @@ export const useFetchTierContents = (tierId: string | undefined) => {
     enabled: !!tierId && tierId !== undefined,
   });
 };
+
+// play video query
+
+
+
+export const useFetchVideoPlayUrl = (videoId: string | undefined) => {
+  const fetchVideoPlayUrl = async (): Promise<VideoPlayResponse> => {
+    const token = authHandler();
+
+    try {
+      const res = await axiosInstance.get<VideoPlayResponse>(
+        `${apiRoutes.mediaViewUrl}/${videoId}/play`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      return res.data;
+    } catch (error) {
+      handleApiError(error, "fetch video play url");
+      throw error;
+    }
+  };
+
+  return useQuery({
+    queryKey: ["video-play", videoId],
+    queryFn: fetchVideoPlayUrl,
+    enabled: !!videoId,
+    staleTime: 1000 * 60 * 5, // cache for 5 minutes
+  });
+};
+
 
 /* -------------------- CREATE TIER CONTENT -------------------- */
 export const useCreateTierContent = () => {

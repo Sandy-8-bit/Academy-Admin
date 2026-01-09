@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, MoreVertical, Edit3, Trash2, Blocks } from "lucide-react";
-
 import { useFetchTiersByCourse, useDeleteTier } from "@/queries/tierQuery";
 import type { Tier } from "@/types/tierTypes";
-
 import TierFormModal from "./TierFormModal";
 import ConfirmDeletePopup from "@components/common/ConfirmDeletePopup";
 import ButtonSm from "@/components/common/Button";
@@ -12,13 +10,11 @@ import ButtonSm from "@/components/common/Button";
 const TierManagement = () => {
   const { id: courseId } = useParams<{ id: string }>();
   const navigate = useNavigate();
-
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const [selectedTier, setSelectedTier] = useState<Tier | null>(null);
   const [tierToDelete, setTierToDelete] = useState<Tier | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
-
   const { data, isLoading } = useFetchTiersByCourse(courseId!);
   const { mutate: deleteTier, isPending: isDeleting } = useDeleteTier(
     courseId!
@@ -88,7 +84,7 @@ const TierManagement = () => {
             <ButtonSm
               state="outline"
               onClick={() => navigate(-1)}
-              className="bg-transparent border-none !px-0 !py-0 "
+              className="bg-transparent border-none px-0! py-0! "
             >
               <ArrowLeft size={20} />
             </ButtonSm>
