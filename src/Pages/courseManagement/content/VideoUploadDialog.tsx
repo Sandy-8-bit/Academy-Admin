@@ -42,6 +42,7 @@ const uploadToAzure = (
     const xhr = new XMLHttpRequest();
     xhr.open("PUT", url, true);
     xhr.setRequestHeader("x-ms-blob-type", "BlockBlob");
+    xhr.setRequestHeader("Content-Type", "video/mp4");
 
     xhr.upload.onprogress = (event) => {
       if (event.lengthComputable) {
