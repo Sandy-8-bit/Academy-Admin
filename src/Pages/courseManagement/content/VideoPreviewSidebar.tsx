@@ -7,7 +7,7 @@ interface VideoPreviewSidebarProps {
   video: VideoContent;
   open: boolean;
   onClose: () => void;
-  contentId: string ;
+  contentId: string;
 }
 
 const formatDuration = (seconds?: number | null) => {
@@ -23,8 +23,10 @@ const VideoPreviewSidebar = ({
   contentId,
   onClose,
 }: VideoPreviewSidebarProps) => {
-  if (!open) return null;
   const { data, isLoading } = useFetchVideoPlayUrl(contentId);
+
+  if (!open) return null;
+
   if (isLoading) {
     return <div className="text-sm text-gray-500">Loading video...</div>;
   }

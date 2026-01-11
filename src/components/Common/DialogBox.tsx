@@ -31,7 +31,7 @@ const DialogBox: React.FC<DialogBoxProps> = ({
   const [domReady, setDomReady] = useState(false);
 
   //handle tap outisde
-  const [containerRef, isVisible] = useClickOutside(true);
+  const [isVisible] = useClickOutside(true);
 
   useEffect(() => {
     if (!isVisible) {
@@ -55,6 +55,7 @@ const DialogBox: React.FC<DialogBoxProps> = ({
   }, [setToggleDialogueBox]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDomReady(true);
     // Lock body scroll when dialog is open
     document.body.style.overflow = "hidden";
@@ -82,7 +83,7 @@ const DialogBox: React.FC<DialogBoxProps> = ({
         duration: 0.3,
         ease: "easeInOut",
       }}
-      className={`fixed z-[100] backdrop-blur-sm ${
+      className={`fixed z-100 backdrop-blur-sm bg-black/40 ${
         isSideDrawer
           ? "inset-y-0 right-0 flex items-stretch"
           : "inset-0 flex items-center justify-center"
@@ -90,8 +91,8 @@ const DialogBox: React.FC<DialogBoxProps> = ({
       //didnnt use childrens direcly as exit animations didnt work i dont know why
       //top positipon is handled via motion variant props y distance
     >
+      <div className="w-screen" />
       <div
-        // ref={containerRef}
         className={`flex flex-col bg-white outline-1 outline-gray-300 backdrop-blur-sm ${
           isSideDrawer
             ? `h-screen p-6 shadow-xl ${width ? "" : "w-[350px]"}`

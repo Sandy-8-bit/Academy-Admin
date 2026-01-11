@@ -352,19 +352,18 @@ export const ContentManagement = () => {
               </div>
             )}
 
-        {previewVideo && previewContentId && (
-  <VideoPreviewSidebar
-    open={previewOpen}
-    video={previewVideo}
-    contentId={previewContentId} // ✅ pass ID
-    onClose={() => {
-      setPreviewOpen(false);
-      setPreviewVideo(null);
-      setPreviewContentId(null);
-    }}
-  />
-)}
-
+            {previewVideo && previewContentId && (
+              <VideoPreviewSidebar
+                open={previewOpen}
+                video={previewVideo}
+                contentId={previewContentId} // ✅ pass ID
+                onClose={() => {
+                  setPreviewOpen(false);
+                  setPreviewVideo(null);
+                  setPreviewContentId(null);
+                }}
+              />
+            )}
 
             <div className="space-y-2">
               {contents.map((item) => {

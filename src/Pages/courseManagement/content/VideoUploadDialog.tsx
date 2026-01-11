@@ -130,7 +130,7 @@ const VideoUploadDialog = ({ onClose, onUploaded }: VideoUploadDialogProps) => {
   }, [status]);
 
   return (
-    <DialogBox setToggleDialogueBox={handleDialogToggle}>
+    <DialogBox isSideDrawer={true} setToggleDialogueBox={handleDialogToggle}>
       <div className="flex flex-col gap-6 min-w-full">
         <header className="flex flex-row  w-full justify-between items-start">
           <div className="lef flex flex-col ">
@@ -144,7 +144,6 @@ const VideoUploadDialog = ({ onClose, onUploaded }: VideoUploadDialogProps) => {
             className="h-4 w-4 cursor-pointer hover:text-red-500 duration-150 ease-in-out transition-all"
           />
         </header>
-
         <label className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-[#d1d3d9] bg-[#f9fafb] px-4 py-8 text-center text-sm font-medium text-[#4b5563]">
           {selectedFile ? (
             <div className="space-y-1">
@@ -176,7 +175,6 @@ const VideoUploadDialog = ({ onClose, onUploaded }: VideoUploadDialogProps) => {
             }}
           />
         </label>
-
         {(status === "uploading" || status === "requesting") && (
           <div>
             <div className="flex items-center justify-between text-xs text-[#6b7280]">
@@ -191,12 +189,17 @@ const VideoUploadDialog = ({ onClose, onUploaded }: VideoUploadDialogProps) => {
             </div>
           </div>
         )}
-
         {error && (
           <div className="rounded-md border border-red-200 bg-red-50 p-3 text-xs text-red-700">
             {error}
           </div>
         )}
+        <h3 className="text-base font-semibold text-[#111827]">
+          Uploaded Videos <br />
+          <span className="mt-2 font-medium text-sm text-gray-600">
+            Feature not implemented yet.
+          </span>
+        </h3>
       </div>
     </DialogBox>
   );
