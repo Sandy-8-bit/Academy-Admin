@@ -10,7 +10,7 @@ import { ContentManagement } from "./pages/courseManagement/content/ContentManag
 const SignInPage = lazy(() => import("./pages/auth/Auth"));
 const AdminDashboard = lazy(() => import("./pages/home/HomePage"));
 const CourseManagement = lazy(
-  () => import("./pages/courseManagement/course/CourseManagement")
+  () => import("./pages/courseManagement/course/CourseManagement"),
 );
 
 function App() {

@@ -12,7 +12,7 @@ export const TopNav: React.FC<TopNavProps> = ({ userName, formattedDate }) => {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
-      className="z-99  border-b border-[#d1d3d9] bg-white px-4 py-2"
+      className="z-99  border-b border-[#d1d3d9] bg-white px-4 py-1"
     >
       <div className="flex items-center justify-between">
         {/* Welcome Section */}
